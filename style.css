@@ -306,129 +306,77 @@ body::after {
     color: #00c4f0;
     font-size: 1.1rem;
 }
-}
-.cart-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: #ff0000;
-    color: #ffffff;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-}
-
-/* ============================================
-   Секции контента (Glassmorphism)
-   ============================================ */
-.content-section {
-.content-section {
-    padding: 30px 25px;
-    margin: 20px auto;
-    max-width: 1000px;
-    
-    /* Glassmorphism */
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    
-    animation: fadeIn 0.5s ease-in-out;
-}
-.content-section h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-    margin-bottom: 25px;
-}
-
-/* ============================================
-   Контакты (Glassmorphism Cards)
-   ============================================ */
-.contacts-container {
-.contacts-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    padding: 10px;
-}
-
-.contact-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 15px;
-    
-    /* Glassmorphism */
-    background: rgba(0, 188, 212, 0.08);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    
-    padding: 25px 20px;
-    border-radius: 16px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.contact-item:hover {
-    background: rgba(0, 188, 212, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(0, 188, 212, 0.2);
-}
-
-.contact-item i {
-    font-size: 2.5rem;
-    color: #00bcd4;
-    min-width: auto;
-}
-
-.contact-item p {
-    line-height: 1.6;
-    color: #aaaaaa;
-    font-size: 0.95rem;
-}
-.contact-item strong {
-    color: #ffffff;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
 
 /* ============================================
    Адаптивность
    ============================================ */
 @media (max-width: 768px) {
-    .header {
-}header {
-        padding: 50px 20px 15px;
-    }
-
     .title {
-        font-size: 3rem;
-        letter-spacing: 4px;
+        font-size: 3.5rem;
+        letter-spacing: 5px;
     }
 
     .slogan {
-        font-size: 1.5rem;
-        margin: 10px 0;
+        font-size: 2rem;
+        letter-spacing: 2px;
     }
 
     .description {
         font-size: 1.1rem;
-        padding: 0 20px;
+    }
+
+    .nav-button {
+        min-width: 180px;
+        padding: 16px 35px;
+        font-size: 1.1rem;
+    }
+
+    .cart-button {
+        width: 50px;
+        height: 50px;
+        top: 15px;
+        right: 15px;
+    }
+
+    .cart-button i {
+        font-size: 1.2rem;
+    }
+
+    .parts-container,
+    .services-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 50px 15px 40px;
+    }
+
+    .title {
+        font-size: 2.5rem;
+        letter-spacing: 3px;
+    }
+
+    .slogan {
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+        margin: 20px 0;
+    }
+
+    .description {
+        font-size: 1rem;
     }
 
     .navigation {
-        padding: 25px 15px 35px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-button {
+        width: 100%;
+    }
+}
         gap: 15px;
     }
 
