@@ -115,48 +115,109 @@ body::after {
 
 /* ============================================
    Навигация
-.navigation {
+   ============================================ */
 .navigation {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding: 30px 20px 40px;
+    gap: 25px;
+    padding: 30px 20px;
     flex-wrap: wrap;
 }
 
 .nav-button {
-    /* Glassmorphism эффект */
-    background: linear-gradient(135deg, 
-        rgba(0, 188, 212, 0.15) 0%, 
-        rgba(0, 151, 167, 0.1) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    
+    background-color: #0097a7;
     color: #ffffff;
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    text-transform: none;
-    letter-spacing: 0.5px;
-    border-radius: 16px;
-    padding: 16px 40px;
+    font-size: 1.3rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 25px;
+    padding: 20px 50px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 32px rgba(0, 188, 212, 0.15);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 151, 167, 0.4);
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-width: 180px;
+    gap: 12px;
+    min-width: 220px;
     justify-content: center;
 }
+
 .nav-button:hover {
-    background: linear-gradient(135deg, 
-        rgba(0, 188, 212, 0.3) 0%, 
-        rgba(0, 151, 167, 0.2) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 12px 48px rgba(0, 188, 212, 0.3);
-    transform: translateY(-2px);
+    background-color: #00bcd4;
+    box-shadow: 0 10px 35px rgba(0, 188, 212, 0.6);
+    transform: translateY(-3px);
+}
+
+.nav-button:active {
+    transform: scale(0.97);
+}
+
+.nav-button.active {
+    background-color: #00acc1;
+    box-shadow: 0 8px 30px rgba(0, 172, 193, 0.8);
+}
+
+/* ============================================
+   Корзина (Floating Cart Button)
+   ============================================ */
+.cart-button {
+    position: fixed;
+    top: 30px;
+    right: 50px;
+    background-color: #005f7f;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 95, 127, 0.6);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.cart-button:hover {
+    background-color: #007a9e;
+    transform: scale(1.1);
+}
+
+.cart-button i {
+    font-size: 1.5rem;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff0000;
+    color: #ffffff;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.6);
+}
+
+/* ============================================
+   Анимация тряски корзины
+   ============================================ */
+@keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) rotate(-5deg); }
+    20%, 40%, 60%, 80% { transform: translateX(5px) rotate(5deg); }
+}
+
+.cart-button.shaking {
+    animation: shake 0.5s ease-in-out;
 }
 
 /* ============================================
