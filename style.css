@@ -51,13 +51,18 @@ body::after {
     z-index: -1;
 }
 
-/* ==========80px 20px 60px;
+/* ============================================
+   Шапка (Header)
+   ============================================ */
+.header {
+    text-align: center;
+    padding: 120px 40px 60px;
     position: relative;
 }
 
 .title {
     font-family: 'Montserrat', sans-serif;
-    font-size: 5rem;
+    font-size: 5.5rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 8px;
@@ -71,13 +76,16 @@ body::after {
 }
 
 .description {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     line-height: 1.4;
-    color: #ffffff;
-    max-width: 800px;
+    background: linear-gradient(to bottom, #ffffff 0%, #cccccc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    max-width: 900px;
     margin: 0 auto 60px;
     text-align: center;
-    padding: 0 20px;
+    padding: 0 40px;
     font-weight: 400;
 }
 
