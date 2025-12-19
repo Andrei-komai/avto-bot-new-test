@@ -482,7 +482,8 @@ body::after {
     max-width: 600px;
 }
 
-#search-input {
+#search-input,
+#services-search-input {
     width: 100%;
     padding: 15px 50px 15px 20px;
     background: rgba(0, 0, 0, 0.7);
@@ -494,13 +495,15 @@ body::after {
     transition: all 0.3s ease;
 }
 
-#search-input:focus {
+#search-input:focus,
+#services-search-input:focus {
     outline: none;
     border-color: #00bcd4;
     background: rgba(0, 0, 0, 0.85);
 }
 
-#search-input::placeholder {
+#search-input::placeholder,
+#services-search-input::placeholder {
     color: #888;
 }
 
