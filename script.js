@@ -3,8 +3,7 @@ let tg = window.Telegram.WebApp;
 tg.expand();
 
 // Корзина
-let cart = [];
-let cartCount = 0;
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Данные товаров и услуг
 let allProducts = [];
@@ -30,13 +29,12 @@ const SERVICES_CSV_URL = 'https://api.allorigins.win/raw?url=' + encodeURICompon
 
 // Функция обновления счетчика корзины
 function updateCartBadge() {
-    cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartBadge.textContent = cartCount;
+    const cartBadge = document.getElementById('cart-badge');
+    const totalItems = cart.length;
     
-    if (cartCount > 0) {
+    if (totalItems > 0) {
+        cartBadge.textContent = totalItems;
         cartBadge.style.display = 'flex';
-        cartButton.classList.add('shake');
-        setTimeout(() => cartButton.classList.remove('shake'), 500);
     } else {
         cartBadge.style.display = 'none';
     }
@@ -44,20 +42,35 @@ function updateCartBadge() {
 
 // Функция добавления товара в корзину
 function addToCart(item) {
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
+    // Проверяем, есть ли уже такой товар
+    const existingIndex = cart.findIndex(cartItem => 
+        cartItem.title === item.title && cartItem.price === item.price
+    );
     
-    if (existingItem) {
-        existingItem.quantity++;
-    } else {
-        cart.push({ ...item, quantity: 1 });
+    if (existingIndex === -1) {
+        // Добавляем новый товар
+        cart.push({
+            title: item.title,
+            price: item.price,
+            category: item.category || 'Товар'
+        });
     }
     
+    // Сохраняем в localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Обновляем badge
     updateCartBadge();
     
     // Вибрация при добавлении
     if (tg.HapticFeedback) {
         tg.HapticFeedback.impactOccurred('light');
     }
+    
+    // Анимация кнопки корзины
+    const cartButton = document.getElementById('cart-button');
+    cartButton.classList.add('shake');
+    setTimeout(() => cartButton.classList.remove('shake'), 500);
 }
 
 // Функция переключения секций
@@ -303,7 +316,7 @@ function displayProducts(products) {
             <div class="category">${product.category}</div>
             <div class="availability">${product.availability}</div>
             <div class="price">${product.price} ₽</div>
-            <button class="add-to-cart-btn">
+            <button class="add-to-cart-btn" onclick='addToCart({title: "${product.name.replace(/'/g, "\\'")}",price: "${product.price}",category: "Запчасть"})'>
                 <i class="fas fa-cart-plus"></i> В корзину
             </button>
         `;
@@ -468,7 +481,7 @@ function displayServices(services) {
             <div class="category"><i class="fas fa-car"></i> Марка: ${service.brand}</div>
             <div class="availability"><i class="fas fa-clock"></i> ${service.duration} мин</div>
             <div class="price">${service.price} ₽</div>
-            <button class="add-to-cart-btn">
+            <button class="add-to-cart-btn" onclick='addToCart({title: "${service.name.replace(/'/g, "\\'")}",price: "${service.price}",category: "Услуга"})'>
                 <i class="fas fa-cart-plus"></i> В корзину
             </button>
         `;
@@ -542,6 +555,160 @@ function hideContacts() {
         tg.HapticFeedback.selectionChanged();
     }
 }
+
+// ============================================
+// ФУНКЦИИ ДЛЯ РАБОТЫ С КОРЗИНОЙ
+// ============================================
+
+// Показать корзину
+function showCart() {
+    // Скрываем главное меню
+    const header = document.querySelector('.header');
+    const navigation = document.querySelector('.navigation');
+    
+    if (header) header.style.display = 'none';
+    if (navigation) navigation.style.display = 'none';
+    
+    // Показываем страницу корзины
+    const cartPage = document.getElementById('cart-page');
+    if (cartPage) {
+        cartPage.style.display = 'block';
+    }
+    
+    // Отображаем товары в корзине
+    renderCart();
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Скрыть корзину
+function hideCart() {
+    // Скрываем страницу корзины
+    const cartPage = document.getElementById('cart-page');
+    if (cartPage) {
+        cartPage.style.display = 'none';
+    }
+    
+    // Показываем главное меню
+    const header = document.querySelector('.header');
+    const navigation = document.querySelector('.navigation');
+    
+    if (header) header.style.display = 'block';
+    if (navigation) navigation.style.display = 'flex';
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Отрисовка корзины
+function renderCart() {
+    const cartItems = document.getElementById('cart-items');
+    const cartTotalPrice = document.getElementById('cart-total-price');
+    
+    if (cart.length === 0) {
+        cartItems.innerHTML = '<div class="cart-empty"><i class="fas fa-shopping-cart"></i><br>Корзина пуста</div>';
+        cartTotalPrice.textContent = '0 ₽';
+        return;
+    }
+    
+    // Генерируем HTML для каждого товара
+    cartItems.innerHTML = '';
+    let total = 0;
+    
+    cart.forEach((item, index) => {
+        const price = parseFloat(item.price) || 0;
+        total += price;
+        
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <div class="cart-item-info">
+                <div class="cart-item-title">${item.title}</div>
+                <div class="cart-item-category">${item.category}</div>
+            </div>
+            <div class="cart-item-price">${item.price} ₽</div>
+            <button class="remove-btn" onclick="removeFromCart(${index})">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        cartItems.appendChild(cartItem);
+    });
+    
+    // Обновляем итоговую сумму
+    cartTotalPrice.textContent = `${total.toFixed(0)} ₽`;
+}
+
+// Удалить товар из корзины
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Обновляем badge
+    updateCartBadge();
+    
+    // Перерисовываем корзину
+    renderCart();
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('medium');
+    }
+}
+
+// Подтверждение заказа
+function confirmOrder() {
+    if (cart.length === 0) {
+        tg.showAlert('Корзина пуста');
+        return;
+    }
+    
+    // Формируем текст заказа
+    let orderText = '🛒 ЗАКАЗ:\n\n';
+    let total = 0;
+    
+    cart.forEach((item, index) => {
+        const price = parseFloat(item.price) || 0;
+        total += price;
+        orderText += `${index + 1}. ${item.title}\n`;
+        orderText += `   Категория: ${item.category}\n`;
+        orderText += `   Цена: ${item.price} ₽\n\n`;
+    });
+    
+    orderText += `💰 Итого: ${total.toFixed(0)} ₽`;
+    
+    // Отправляем данные боту
+    tg.sendData(JSON.stringify({
+        order: cart,
+        total: total,
+        text: orderText
+    }));
+    
+    // Очищаем корзину
+    cart = [];
+    localStorage.removeItem('cart');
+    updateCartBadge();
+    
+    // Вибрация успеха
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
+    
+    tg.close();
+}
+
+// Обработчик клика по кнопке корзины
+document.getElementById('cart-button').addEventListener('click', showCart);
+
+// Инициализация при загрузке
+updateCartBadge();
 
 console.log('AutoService Pro WebApp загружен');
 console.log('Telegram WebApp готов:', tg.isReady);

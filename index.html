@@ -74,6 +74,31 @@
         <div id="services-grid"></div>
     </div>
 
+    <!-- Страница корзины -->
+    <div id="cart-page" style="display:none">
+        <div class="parts-header">
+            <button class="back-button" onclick="hideCart()">
+                <i class="fas fa-arrow-left"></i> Назад
+            </button>
+            <h2 class="parts-title">КОРЗИНА</h2>
+            <button class="contacts-btn" onclick="showContacts()">
+                <i class="fas fa-phone"></i> Контакты
+            </button>
+        </div>
+        <div class="cart-content">
+            <div id="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Итого:</span>
+                    <span id="cart-total-price">0 ₽</span>
+                </div>
+                <button class="confirm-order-btn" onclick="confirmOrder()">
+                    <i class="fas fa-check"></i> ПОДТВЕРДИТЬ ЗАКАЗ
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Страница контактов -->
     <div id="contacts-page" style="display:none">
         <div class="parts-header">
