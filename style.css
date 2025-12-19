@@ -389,9 +389,10 @@ body::after {
 }
 
 /* ============================================
-   Страница каталога запчастей
+   Страница каталога запчастей и услуг
    ============================================ */
-#parts-page {
+#parts-page,
+#services-page {
     position: fixed;
     top: 0;
     left: 0;
@@ -403,7 +404,8 @@ body::after {
     padding: 20px;
 }
 
-#parts-page::before {
+#parts-page::before,
+#services-page::before {
     content: '';
     position: fixed;
     top: 0;
@@ -419,7 +421,8 @@ body::after {
     z-index: -2;
 }
 
-#parts-page::after {
+#parts-page::after,
+#services-page::after {
     content: '';
     position: fixed;
     top: 0;
@@ -510,7 +513,8 @@ body::after {
     font-size: 1.2rem;
 }
 
-#parts-grid {
+#parts-grid,
+#services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
@@ -617,12 +621,14 @@ body::after {
 }
 
 @media (max-width: 480px) {
-    #parts-grid {
+    #parts-grid,
+    #services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
 
-    #parts-page {
+    #parts-page,
+    #services-page {
         padding: 15px;
     }
 
@@ -639,7 +645,8 @@ body::after {
         font-size: 0.85rem;
     }
 
-    #search-input {
+    #search-input,
+    #services-search-input {
         padding: 12px 40px 12px 15px;
         font-size: 0.9rem;
     }

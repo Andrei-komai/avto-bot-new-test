@@ -6,8 +6,9 @@ tg.expand();
 let cart = [];
 let cartCount = 0;
 
-// Данные товаров
+// Данные товаров и услуг
 let allProducts = [];
+let allServices = [];
 
 // Элементы DOM
 const cartButton = document.getElementById('cart-button');
@@ -22,6 +23,10 @@ const sections = {
 // CSV URL с CORS-прокси
 const ORIGINAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=0&single=true&output=csv';
 const CSV_URL = 'https://corsproxy.io/?' + encodeURIComponent(ORIGINAL_CSV_URL);
+
+// CSV URL для услуг с CORS-прокси
+const ORIGINAL_SERVICES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=245992410&single=true&output=csv';
+const SERVICES_CSV_URL = 'https://corsproxy.io/?' + encodeURIComponent(ORIGINAL_SERVICES_CSV_URL);
 
 // Функция обновления счетчика корзины
 function updateCartBadge() {
@@ -324,6 +329,171 @@ function filterParts() {
         });
         
         displayProducts(filtered);
+    }
+}
+
+// ============================================
+// ФУНКЦИИ ДЛЯ РАБОТЫ С КАТАЛОГОМ УСЛУГ
+// ============================================
+
+// Показать страницу услуг
+function showServices() {
+    // Скрываем главное меню
+    const header = document.querySelector('.header');
+    const navigation = document.querySelector('.navigation');
+    
+    if (header) header.style.display = 'none';
+    if (navigation) navigation.style.display = 'none';
+    
+    // Показываем страницу услуг
+    const servicesPage = document.getElementById('services-page');
+    if (servicesPage) {
+        servicesPage.style.display = 'block';
+    }
+    
+    // Загружаем услуги, если еще не загружены
+    if (allServices.length === 0) {
+        loadServices();
+    }
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Скрыть страницу услуг
+function hideServices() {
+    // Скрываем страницу услуг
+    const servicesPage = document.getElementById('services-page');
+    if (servicesPage) {
+        servicesPage.style.display = 'none';
+    }
+    
+    // Показываем главное меню
+    const header = document.querySelector('.header');
+    const navigation = document.querySelector('.navigation');
+    
+    if (header) header.style.display = 'block';
+    if (navigation) navigation.style.display = 'flex';
+    
+    // Очищаем поиск
+    const searchInput = document.getElementById('services-search-input');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Загрузить услуги из CSV
+function loadServices() {
+    const servicesGrid = document.getElementById('services-grid');
+    
+    // Показываем индикатор загрузки
+    servicesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #0097a7; font-size: 1.2rem;"><i class="fas fa-spinner fa-spin"></i> Загрузка услуг...</div>';
+    
+    fetch(SERVICES_CSV_URL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки данных');
+            }
+            return response.text();
+        })
+        .then(csvData => {
+            // Парсинг CSV
+            const lines = csvData.trim().split('\n');
+            const headers = lines[0].split(',');
+            
+            allServices = [];
+            
+            // Пропускаем заголовок, обрабатываем строки
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                
+                if (values.length >= 6) {
+                    const service = {
+                        id: values[0].trim(),
+                        name: values[1].trim(),
+                        description: values[2].trim(),
+                        price: values[3].trim(),
+                        brand: values[4].trim(),
+                        duration: values[5].trim()
+                    };
+                    
+                    allServices.push(service);
+                }
+            }
+            
+            // Отображаем услуги
+            displayServices(allServices);
+            
+            console.log('Загружено услуг:', allServices.length);
+        })
+        .catch(error => {
+            console.error('Ошибка при загрузке услуг:', error);
+            servicesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #ff5252; font-size: 1.2rem;"><i class="fas fa-exclamation-triangle"></i> Ошибка загрузки данных</div>';
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+        });
+}
+
+// Отобразить услуги в сетке
+function displayServices(services) {
+    const servicesGrid = document.getElementById('services-grid');
+    
+    if (services.length === 0) {
+        servicesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #888; font-size: 1.2rem;">Услуги не найдены</div>';
+        return;
+    }
+    
+    servicesGrid.innerHTML = '';
+    
+    services.forEach(service => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.id = service.id;
+        card.dataset.price = service.price;
+        card.dataset.name = service.name;
+        card.dataset.description = service.description;
+        
+        card.innerHTML = `
+            <h3>${service.name}</h3>
+            <div class="description">${service.description}</div>
+            <div class="category"><i class="fas fa-car"></i> Марка: ${service.brand}</div>
+            <div class="availability"><i class="fas fa-clock"></i> ${service.duration} мин</div>
+            <div class="price">${service.price} ₽</div>
+            <button class="add-to-cart-btn">
+                <i class="fas fa-cart-plus"></i> В корзину
+            </button>
+        `;
+        
+        servicesGrid.appendChild(card);
+    });
+}
+
+// Фильтрация услуг по поисковому запросу
+function filterServices() {
+    const searchInput = document.getElementById('services-search-input');
+    const query = searchInput.value.toLowerCase().trim();
+    
+    if (query === '') {
+        // Показываем все услуги
+        displayServices(allServices);
+    } else {
+        // Фильтруем услуги
+        const filtered = allServices.filter(service => {
+            return service.name.toLowerCase().includes(query) ||
+                   service.description.toLowerCase().includes(query) ||
+                   service.brand.toLowerCase().includes(query);
+        });
+        
+        displayServices(filtered);
     }
 }
 

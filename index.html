@@ -36,7 +36,7 @@
         <button class="nav-button" data-section="parts-section" onclick="showParts()">
             <i class="fas fa-cog"></i> Запчасти
         </button>
-        <button class="nav-button" data-section="services-section">
+        <button class="nav-button" data-section="services-section" onclick="showServices()">
             <i class="fas fa-wrench"></i> Услуги
         </button>
         <button class="nav-button" data-section="contacts-section">
@@ -57,6 +57,21 @@
             <i class="fas fa-search search-icon"></i>
         </div>
         <div id="parts-grid"></div>
+    </div>
+
+    <!-- Страница каталога услуг -->
+    <div id="services-page" style="display:none">
+        <div class="parts-header">
+            <button class="back-button" onclick="hideServices()">
+                <i class="fas fa-arrow-left"></i> Назад
+            </button>
+            <h2 class="parts-title">УСЛУГИ</h2>
+        </div>
+        <div class="search-container">
+            <input type="text" id="services-search-input" placeholder="Поиск услуг..." oninput="filterServices()">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div id="services-grid"></div>
     </div>
 
     <!-- Контейнер для запчастей -->
