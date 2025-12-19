@@ -19,8 +19,9 @@ const sections = {
     'contacts': document.getElementById('contacts-section')
 };
 
-// CSV URL
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=0&single=true&output=csv';
+// CSV URL с CORS-прокси
+const ORIGINAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=0&single=true&output=csv';
+const CSV_URL = 'https://corsproxy.io/?' + encodeURIComponent(ORIGINAL_CSV_URL);
 
 // Функция обновления счетчика корзины
 function updateCartBadge() {
