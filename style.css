@@ -165,8 +165,8 @@ body::after {
    ============================================ */
 .cart-button {
     position: fixed;
-    top: 30px;
-    right: 50px;
+    top: 40px;
+    right: 35px;
     background-color: #005f7f;
     color: #ffffff;
     border-radius: 50%;
@@ -311,6 +311,11 @@ body::after {
    Адаптивность
    ============================================ */
 @media (max-width: 768px) {
+    body::before {
+        background-attachment: fixed;
+        background-size: cover;
+    }
+
     .title {
         font-size: 3.5rem;
         letter-spacing: 5px;
@@ -334,8 +339,8 @@ body::after {
     .cart-button {
         width: 50px;
         height: 50px;
-        top: 15px;
-        right: 15px;
+        top: 25px;
+        right: 20px;
     }
 
     .cart-button i {
@@ -349,6 +354,11 @@ body::after {
 }
 
 @media (max-width: 480px) {
+    body::before {
+        background-attachment: fixed;
+        background-size: cover;
+    }
+
     .header {
         padding: 50px 15px 40px;
     }
