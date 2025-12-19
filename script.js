@@ -663,33 +663,154 @@ function removeFromCart(index) {
     }
 }
 
-// Подтверждение заказа
+// Подтверждение заказа - переход к оформлению
 function confirmOrder() {
     if (cart.length === 0) {
         tg.showAlert('Корзина пуста');
         return;
     }
     
-    // Формируем текст заказа
-    let orderText = '🛒 ЗАКАЗ:\n\n';
+    // Скрываем корзину
+    const cartPage = document.getElementById('cart-page');
+    if (cartPage) {
+        cartPage.style.display = 'none';
+    }
+    
+    // Показываем форму оформления
+    const checkoutSection = document.getElementById('checkout-section');
+    if (checkoutSection) {
+        checkoutSection.style.display = 'block';
+    }
+    
+    // Отображаем товары в форме оформления
+    renderCheckoutItems();
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Вернуться в корзину из формы оформления
+function backToCart() {
+    const checkoutSection = document.getElementById('checkout-section');
+    if (checkoutSection) {
+        checkoutSection.style.display = 'none';
+    }
+    
+    const cartPage = document.getElementById('cart-page');
+    if (cartPage) {
+        cartPage.style.display = 'block';
+    }
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Отрисовка товаров в форме оформления
+function renderCheckoutItems() {
+    const checkoutItems = document.getElementById('checkout-items');
+    const checkoutTotalPrice = document.getElementById('checkout-total-price');
+    
+    if (!checkoutItems || !checkoutTotalPrice) return;
+    
+    checkoutItems.innerHTML = '';
     let total = 0;
     
-    cart.forEach((item, index) => {
+    cart.forEach(item => {
         const price = parseFloat(item.price) || 0;
         total += price;
-        orderText += `${index + 1}. ${item.title}\n`;
-        orderText += `   Категория: ${item.category}\n`;
-        orderText += `   Цена: ${item.price} ₽\n\n`;
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'checkout-item';
+        itemDiv.innerHTML = `
+            <span class="checkout-item-title">${item.title}</span>
+            <span class="checkout-item-price">${item.price} ₽</span>
+        `;
+        
+        checkoutItems.appendChild(itemDiv);
     });
     
-    orderText += `💰 Итого: ${total.toFixed(0)} ₽`;
+    checkoutTotalPrice.textContent = `${total.toFixed(0)} ₽`;
+}
+
+// Отправка заказа
+function submitOrder() {
+    const form = document.getElementById('checkout-form');
+    const name = document.getElementById('customer-name').value.trim();
+    const phone = document.getElementById('customer-phone').value.trim();
+    const email = document.getElementById('customer-email').value.trim();
+    const date = document.getElementById('appointment-date').value;
+    const time = document.getElementById('appointment-time').value;
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+    
+    // Проверка обязательных полей
+    if (!name || !phone) {
+        tg.showAlert('Заполните обязательные поля: ФИО и Телефон');
+        return;
+    }
+    
+    // Формируем данные заказа
+    let total = 0;
+    cart.forEach(item => {
+        total += parseFloat(item.price) || 0;
+    });
+    
+    const orderData = {
+        customer: {
+            name: name,
+            phone: phone,
+            email: email,
+            date: date,
+            time: time
+        },
+        paymentMethod: paymentMethod,
+        items: cart,
+        total: total
+    };
+    
+    // Скрываем форму
+    const checkoutSection = document.getElementById('checkout-section');
+    if (checkoutSection) {
+        checkoutSection.style.display = 'none';
+    }
+    
+    // Если оплата картой - показываем имитацию
+    if (paymentMethod === 'card') {
+        const paymentStub = document.getElementById('payment-stub-section');
+        if (paymentStub) {
+            paymentStub.style.display = 'flex';
+        }
+        
+        // Имитация обработки платежа
+        setTimeout(() => {
+            finishOrder(orderData);
+        }, 2000);
+    } else {
+        // Наличными - сразу завершаем
+        finishOrder(orderData);
+    }
+}
+
+// Завершение оформления заказа
+function finishOrder(orderData) {
+    // Скрываем имитацию оплаты
+    const paymentStub = document.getElementById('payment-stub-section');
+    if (paymentStub) {
+        paymentStub.style.display = 'none';
+    }
+    
+    // Показываем success screen
+    const successSection = document.getElementById('success-section');
+    if (successSection) {
+        successSection.style.display = 'flex';
+    }
     
     // Отправляем данные боту
-    tg.sendData(JSON.stringify({
-        order: cart,
-        total: total,
-        text: orderText
-    }));
+    const orderText = formatOrderText(orderData);
+    tg.sendData(JSON.stringify(orderData));
     
     // Очищаем корзину
     cart = [];
@@ -700,12 +821,92 @@ function confirmOrder() {
     if (tg.HapticFeedback) {
         tg.HapticFeedback.notificationOccurred('success');
     }
+}
+
+// Форматирование текста заказа
+function formatOrderText(orderData) {
+    let text = '🛒 НОВЫЙ ЗАКАЗ\n\n';
+    text += `👤 Клиент: ${orderData.customer.name}\n`;
+    text += `📞 Телефон: ${orderData.customer.phone}\n`;
     
+    if (orderData.customer.email) {
+        text += `📧 Email: ${orderData.customer.email}\n`;
+    }
+    
+    if (orderData.customer.date) {
+        text += `📅 Дата: ${orderData.customer.date}\n`;
+    }
+    
+    if (orderData.customer.time) {
+        text += `⏰ Время: ${orderData.customer.time}\n`;
+    }
+    
+    text += `\n💳 Оплата: ${orderData.paymentMethod === 'cash' ? 'Наличными' : 'Картой онлайн'}\n`;
+    text += `\n📦 Товары/Услуги:\n`;
+    
+    orderData.items.forEach((item, index) => {
+        text += `${index + 1}. ${item.title} - ${item.price} ₽\n`;
+    });
+    
+    text += `\n💰 Итого: ${orderData.total.toFixed(0)} ₽`;
+    
+    return text;
+}
+
+// Переход в главное меню
+function goToMainMenu() {
+    // Скрываем success screen
+    const successSection = document.getElementById('success-section');
+    if (successSection) {
+        successSection.style.display = 'none';
+    }
+    
+    // Показываем главное меню
+    const header = document.querySelector('.header');
+    const navigation = document.querySelector('.navigation');
+    
+    if (header) header.style.display = 'block';
+    if (navigation) navigation.style.display = 'flex';
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Закрыть приложение
+function closeApp() {
     tg.close();
 }
 
 // Обработчик клика по кнопке корзины
 document.getElementById('cart-button').addEventListener('click', showCart);
+
+// Валидация формы оформления заказа
+function validateCheckoutForm() {
+    const name = document.getElementById('customer-name');
+    const phone = document.getElementById('customer-phone');
+    const submitBtn = document.getElementById('confirm-checkout-btn');
+    
+    if (!name || !phone || !submitBtn) return;
+    
+    const isValid = name.value.trim() !== '' && phone.value.trim() !== '';
+    submitBtn.disabled = !isValid;
+}
+
+// Добавляем слушатели для валидации формы
+document.addEventListener('DOMContentLoaded', () => {
+    const nameInput = document.getElementById('customer-name');
+    const phoneInput = document.getElementById('customer-phone');
+    
+    if (nameInput) {
+        nameInput.addEventListener('input', validateCheckoutForm);
+    }
+    
+    if (phoneInput) {
+        phoneInput.addEventListener('input', validateCheckoutForm);
+    }
+});
 
 // Инициализация при загрузке
 updateCartBadge();

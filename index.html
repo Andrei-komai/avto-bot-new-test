@@ -99,6 +99,109 @@
         </div>
     </div>
 
+    <!-- Страница оформления заказа -->
+    <div id="checkout-section" style="display:none">
+        <div class="parts-header">
+            <button class="back-button" onclick="backToCart()">
+                <i class="fas fa-arrow-left"></i> Назад
+            </button>
+            <h2 class="parts-title">ОФОРМЛЕНИЕ ЗАКАЗА</h2>
+        </div>
+        <div class="checkout-content">
+            <form id="checkout-form" class="checkout-form">
+                <div class="form-group">
+                    <label for="customer-name"><i class="fas fa-user"></i> ФИО *</label>
+                    <input type="text" id="customer-name" name="name" required placeholder="Введите ваше полное имя">
+                </div>
+
+                <div class="form-group">
+                    <label for="customer-phone"><i class="fas fa-phone"></i> Телефон *</label>
+                    <input type="tel" id="customer-phone" name="phone" required placeholder="+7 (___) ___-__-__">
+                </div>
+
+                <div class="form-group">
+                    <label for="customer-email"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="customer-email" name="email" placeholder="example@mail.com">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointment-date"><i class="fas fa-calendar"></i> Дата записи</label>
+                        <input type="date" id="appointment-date" name="date">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointment-time"><i class="fas fa-clock"></i> Время записи</label>
+                        <input type="time" id="appointment-time" name="time">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-credit-card"></i> Способ оплаты</label>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="cash" checked>
+                            <span class="payment-label">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Наличными в мастерской
+                            </span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="card">
+                            <span class="payment-label">
+                                <i class="fas fa-credit-card"></i>
+                                Картой онлайн
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="order-summary">
+                    <h3>Ваш заказ:</h3>
+                    <div id="checkout-items"></div>
+                    <div class="checkout-total">
+                        <span>Итого к оплате:</span>
+                        <span id="checkout-total-price">0 ₽</span>
+                    </div>
+                </div>
+
+                <button type="button" class="confirm-checkout-btn" id="confirm-checkout-btn" disabled onclick="submitOrder()">
+                    <i class="fas fa-check-circle"></i> Подтвердить заказ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Страница имитации оплаты -->
+    <div id="payment-stub-section" style="display:none">
+        <div class="payment-stub-content">
+            <div class="payment-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h2>Имитация оплаты...</h2>
+            <p>Пожалуйста, подождите</p>
+        </div>
+    </div>
+
+    <!-- Страница успешного оформления -->
+    <div id="success-section" style="display:none">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Готово!</h2>
+            <p>Ваш заказ успешно оформлен.<br>Менеджер свяжется с вами в ближайшее время.</p>
+            <div class="success-buttons">
+                <button class="success-btn" onclick="goToMainMenu()">
+                    <i class="fas fa-home"></i> Главное меню
+                </button>
+                <button class="success-btn secondary" onclick="closeApp()">
+                    <i class="fas fa-sign-out-alt"></i> Покинуть магазин
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Страница контактов -->
     <div id="contacts-page" style="display:none">
         <div class="parts-header">
