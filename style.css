@@ -512,7 +512,7 @@ body::after {
 
 #parts-grid {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
     margin-bottom: 30px;
 }
@@ -526,6 +526,8 @@ body::after {
     gap: 8px;
     transition: all 0.3s ease;
     border: 1px solid rgba(0, 151, 167, 0.3);
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .product-card:hover {
@@ -591,10 +593,6 @@ body::after {
 
 /* Адаптивность для сетки товаров */
 @media (max-width: 768px) {
-    #parts-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
     .parts-title {
         font-size: 1.8rem;
     }
@@ -619,6 +617,11 @@ body::after {
 }
 
 @media (max-width: 480px) {
+    #parts-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
     #parts-page {
         padding: 15px;
     }
