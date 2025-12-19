@@ -401,7 +401,7 @@ body::after {
     background-color: #000000;
     z-index: 100;
     overflow-y: auto;
-    padding: 20px;
+    padding: 0;
 }
 
 #parts-page::before,
@@ -437,8 +437,15 @@ body::after {
     display: flex;
     align-items: center;
     gap: 20px;
-    margin-bottom: 20px;
-    position: relative;
+    margin-bottom: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 20px;
+    z-index: 110;
+    backdrop-filter: blur(10px);
 }
 
 .back-button {
@@ -477,9 +484,16 @@ body::after {
 }
 
 .search-container {
-    position: relative;
-    margin-bottom: 30px;
-    max-width: 600px;
+    position: fixed;
+    top: 90px;
+    left: 20px;
+    right: 20px;
+    margin-bottom: 0;
+    max-width: calc(100% - 40px);
+    background: rgba(0, 0, 0, 0.95);
+    padding: 10px 0 20px;
+    z-index: 110;
+    backdrop-filter: blur(10px);
 }
 
 #search-input,
@@ -522,6 +536,7 @@ body::after {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
     margin-bottom: 30px;
+    padding: 200px 20px 20px;
 }
 
 .product-card {
@@ -632,11 +647,12 @@ body::after {
 
     #parts-page,
     #services-page {
-        padding: 15px;
+        padding: 0;
     }
 
     .parts-header {
         gap: 10px;
+        padding: 15px;
     }
 
     .parts-title {
@@ -646,6 +662,19 @@ body::after {
     .back-button {
         padding: 8px 12px;
         font-size: 0.85rem;
+    }
+
+    .search-container {
+        top: 75px;
+        left: 15px;
+        right: 15px;
+        max-width: calc(100% - 30px);
+        padding: 8px 0 15px;
+    }
+
+    #parts-grid,
+    #services-grid {
+        padding: 170px 15px 15px;
     }
 
     #search-input,
