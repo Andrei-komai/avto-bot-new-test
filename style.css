@@ -949,6 +949,12 @@ body::after {
 
 /* Адаптивность для сетки товаров */
 @media (max-width: 768px) {
+    #parts-grid,
+    #services-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+    }
+
     .parts-title {
         font-size: 1.8rem;
     }
@@ -958,27 +964,25 @@ body::after {
         font-size: 0.9rem;
     }
 
+    .product-card {
+        min-width: 0;
+    }
+
     .product-card h3 {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 
     .product-card .description {
-        font-size: 0.75em;
+        font-size: 0.8em;
     }
 
     .add-to-cart-btn {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         padding: 8px;
     }
 }
 
 @media (max-width: 480px) {
-    #parts-grid,
-    #services-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-
     #parts-page,
     #services-page {
         padding: 0;
@@ -1008,7 +1012,32 @@ body::after {
 
     #parts-grid,
     #services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
         padding: 170px 15px 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .product-card {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .product-card h3 {
+        font-size: 0.85rem;
+        word-wrap: break-word;
+    }
+
+    .product-card .description {
+        font-size: 0.75em;
+        word-wrap: break-word;
+    }
+
+    .add-to-cart-btn {
+        font-size: 0.8rem;
+        padding: 8px;
+        white-space: nowrap;
     }
 
     #search-input,
