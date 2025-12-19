@@ -497,5 +497,51 @@ function filterServices() {
     }
 }
 
+// ============================================
+// ФУНКЦИИ ДЛЯ РАБОТЫ СО СТРАНИЦЕЙ КОНТАКТОВ
+// ============================================
+
+// Показать страницу контактов
+function showContacts() {
+    // Скрываем главное меню
+    const header = document.querySelector('.header');
+    const navigation = document.querySelector('.navigation');
+    
+    if (header) header.style.display = 'none';
+    if (navigation) navigation.style.display = 'none';
+    
+    // Показываем страницу контактов
+    const contactsPage = document.getElementById('contacts-page');
+    if (contactsPage) {
+        contactsPage.style.display = 'flex';
+    }
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
+// Скрыть страницу контактов
+function hideContacts() {
+    // Скрываем страницу контактов
+    const contactsPage = document.getElementById('contacts-page');
+    if (contactsPage) {
+        contactsPage.style.display = 'none';
+    }
+    
+    // Показываем главное меню
+    const header = document.querySelector('.header');
+    const navigation = document.querySelector('.navigation');
+    
+    if (header) header.style.display = 'block';
+    if (navigation) navigation.style.display = 'flex';
+    
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.selectionChanged();
+    }
+}
+
 console.log('AutoService Pro WebApp загружен');
 console.log('Telegram WebApp готов:', tg.isReady);

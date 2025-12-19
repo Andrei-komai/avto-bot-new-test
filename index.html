@@ -39,7 +39,7 @@
         <button class="nav-button" data-section="services-section" onclick="showServices()">
             <i class="fas fa-wrench"></i> Услуги
         </button>
-        <button class="nav-button" data-section="contacts-section">
+        <button class="nav-button" data-section="contacts-section" onclick="showContacts()">
             <i class="fas fa-phone"></i> Контакты
         </button>
     </nav>
@@ -72,6 +72,46 @@
             <i class="fas fa-search search-icon"></i>
         </div>
         <div id="services-grid"></div>
+    </div>
+
+    <!-- Страница контактов -->
+    <div id="contacts-page" style="display:none">
+        <div class="parts-header">
+            <button class="back-button" onclick="hideContacts()">
+                <i class="fas fa-arrow-left"></i> Назад
+            </button>
+            <h2 class="parts-title">КОНТАКТЫ</h2>
+        </div>
+        <div class="contacts-content">
+            <h3 class="contacts-welcome">Добро пожаловать в AutoService Pro!</h3>
+            
+            <p class="contacts-intro">Мы — профессиональная автомастерская с 10+ летним опытом.</p>
+            
+            <div class="contacts-specialization">
+                <p><strong>Специализируемся на:</strong></p>
+                <ul class="contacts-list">
+                    <li>✅ Диагностике и ремонте всех марок авто</li>
+                    <li>✅ Замене запчастей и ТО</li>
+                    <li>✅ Кузовных работах и покраске</li>
+                    <li>✅ Электрике и подвеске</li>
+                </ul>
+            </div>
+            
+            <div class="contacts-info">
+                <p class="contacts-address">
+                    <i class="fas fa-map-marker-alt"></i> <strong>Наша мастерская работает по адресу:</strong><br>
+                    Бульвар Карпова 7
+                </p>
+                <p class="contacts-hours">
+                    <i class="fas fa-clock"></i> <strong>Режим работы:</strong><br>
+                    ПН-ПТ 9:00-18:00, СБ 10:00-16:00
+                </p>
+                <p class="contacts-phone">
+                    <i class="fas fa-phone"></i> <strong>Телефон:</strong><br>
+                    <a href="tel:+79850303104">+7 (985) 030-31-04</a>
+                </p>
+            </div>
+        </div>
     </div>
 
     <!-- Контейнер для запчастей -->
