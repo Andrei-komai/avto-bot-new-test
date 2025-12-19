@@ -33,7 +33,7 @@
 
     <!-- Навигация -->
     <nav class="navigation">
-        <button class="nav-button" data-section="parts-section">
+        <button class="nav-button" data-section="parts-section" onclick="showParts()">
             <i class="fas fa-cog"></i> Запчасти
         </button>
         <button class="nav-button" data-section="services-section">
@@ -43,6 +43,21 @@
             <i class="fas fa-phone"></i> Контакты
         </button>
     </nav>
+
+    <!-- Страница каталога запчастей -->
+    <div id="parts-page" style="display:none">
+        <div class="parts-header">
+            <button class="back-button" onclick="hideParts()">
+                <i class="fas fa-arrow-left"></i> Назад
+            </button>
+            <h2 class="parts-title">ЗАПЧАСТИ</h2>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Поиск товаров..." oninput="filterParts()">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div id="parts-grid"></div>
+    </div>
 
     <!-- Контейнер для запчастей -->
     <section id="parts-section" class="content-section" style="display: none;">
