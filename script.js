@@ -19,13 +19,9 @@ const sections = {
     'contacts': document.getElementById('contacts-section')
 };
 
-// CSV URL с CORS-прокси
-const ORIGINAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=0&single=true&output=csv';
-const CSV_URL = 'https://thingproxy.freeboard.io/fetch/' + ORIGINAL_CSV_URL;
-
-// CSV URL для услуг с CORS-прокси
-const ORIGINAL_SERVICES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=245992410&single=true&output=csv';
-const SERVICES_CSV_URL = 'https://thingproxy.freeboard.io/fetch/' + ORIGINAL_SERVICES_CSV_URL;
+// Google Apps Script API URLs
+const PARTS_API_URL = 'https://script.google.com/macros/s/AKfycbxt27ByU4m8DVCspx_3CNRuKLfGMvfp7_9EcAwhepkftyptUUMVX2lnnV9qfE0obB3W/exec?sheet=parts';
+const SERVICES_API_URL = 'https://script.google.com/macros/s/AKfycbxt27ByU4m8DVCspx_3CNRuKLfGMvfp7_9EcAwhepkftyptUUMVX2lnnV9qfE0obB3W/exec?sheet=services';
 
 // Функция обновления счетчика корзины
 function updateCartBadge() {
@@ -214,44 +210,41 @@ function hideParts() {
     }
 }
 
-// Загрузить товары из CSV
+// Загрузить товары из Google Apps Script API
 function loadParts() {
     const partsGrid = document.getElementById('parts-grid');
     
     // Показываем индикатор загрузки
     partsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #0097a7; font-size: 1.2rem;"><i class="fas fa-spinner fa-spin"></i> Загрузка товаров...</div>';
     
-    fetch(CSV_URL)
+    fetch(PARTS_API_URL)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Ошибка загрузки данных');
             }
-            return response.text();
+            return response.json();
         })
-        .then(csvData => {
-            // Парсинг CSV
-            const lines = csvData.trim().split('\n');
-            const headers = lines[0].split(',');
+        .then(data => {
+            // Проверяем успешность ответа
+            if (!data.ok || !data.items) {
+                throw new Error('Неверный формат данных');
+            }
             
             allProducts = [];
             
-            // Пропускаем заголовок, обрабатываем строки
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseCSVLine(lines[i]);
+            // Обрабатываем элементы из JSON
+            data.items.forEach(item => {
+                const product = {
+                    id: item.ID || item.id || '',
+                    name: item['Название'] || item.name || '',
+                    description: item['Описание'] || item.description || '',
+                    price: item['Цена'] || item.price || 0,
+                    category: item['Категория'] || item.category || '',
+                    availability: item['Наличие'] || item.stock || item.availability || ''
+                };
                 
-                if (values.length >= 6) {
-                    const product = {
-                        id: values[0].trim(),
-                        name: values[1].trim(),
-                        description: values[2].trim(),
-                        price: values[3].trim(),
-                        category: values[4].trim(),
-                        availability: values[5].trim()
-                    };
-                    
-                    allProducts.push(product);
-                }
-            }
+                allProducts.push(product);
+            });
             
             // Отображаем товары
             displayProducts(allProducts);
@@ -266,29 +259,6 @@ function loadParts() {
                 tg.HapticFeedback.notificationOccurred('error');
             }
         });
-}
-
-// Парсинг строки CSV с учетом запятых внутри кавычек
-function parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        
-        if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-            result.push(current);
-            current = '';
-        } else {
-            current += char;
-        }
-    }
-    
-    result.push(current);
-    return result;
 }
 
 // Отобразить товары в сетке
@@ -402,44 +372,41 @@ function hideServices() {
     }
 }
 
-// Загрузить услуги из CSV
+// Загрузить услуги из Google Apps Script API
 function loadServices() {
     const servicesGrid = document.getElementById('services-grid');
     
     // Показываем индикатор загрузки
     servicesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #0097a7; font-size: 1.2rem;"><i class="fas fa-spinner fa-spin"></i> Загрузка услуг...</div>';
     
-    fetch(SERVICES_CSV_URL)
+    fetch(SERVICES_API_URL)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Ошибка загрузки данных');
             }
-            return response.text();
+            return response.json();
         })
-        .then(csvData => {
-            // Парсинг CSV
-            const lines = csvData.trim().split('\n');
-            const headers = lines[0].split(',');
+        .then(data => {
+            // Проверяем успешность ответа
+            if (!data.ok || !data.items) {
+                throw new Error('Неверный формат данных');
+            }
             
             allServices = [];
             
-            // Пропускаем заголовок, обрабатываем строки
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseCSVLine(lines[i]);
+            // Обрабатываем элементы из JSON
+            data.items.forEach(item => {
+                const service = {
+                    id: item.ID || item.id || '',
+                    name: item['Название'] || item.name || '',
+                    description: item['Описание'] || item.description || '',
+                    price: item['Цена'] || item.price || 0,
+                    brand: item['Марка авто'] || item.carBrand || item.brand || 'Все',
+                    duration: item['Продолжительность работ (мин)'] || item.duration || 0
+                };
                 
-                if (values.length >= 6) {
-                    const service = {
-                        id: values[0].trim(),
-                        name: values[1].trim(),
-                        description: values[2].trim(),
-                        price: values[3].trim(),
-                        brand: values[4].trim(),
-                        duration: values[5].trim()
-                    };
-                    
-                    allServices.push(service);
-                }
-            }
+                allServices.push(service);
+            });
             
             // Отображаем услуги
             displayServices(allServices);
