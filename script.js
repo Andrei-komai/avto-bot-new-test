@@ -21,11 +21,11 @@ const sections = {
 
 // CSV URL с CORS-прокси
 const ORIGINAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=0&single=true&output=csv';
-const CSV_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(ORIGINAL_CSV_URL);
+const CSV_URL = 'https://thingproxy.freeboard.io/fetch/' + ORIGINAL_CSV_URL;
 
 // CSV URL для услуг с CORS-прокси
 const ORIGINAL_SERVICES_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4FnD4f8j2UyWp4CMRm58LQHOMdbMBawrg0VnKlKPKjfheTzC6h_16kTmNoB9jgyEPLr3OgiGKubsu/pub?gid=245992410&single=true&output=csv';
-const SERVICES_CSV_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(ORIGINAL_SERVICES_CSV_URL);
+const SERVICES_CSV_URL = 'https://thingproxy.freeboard.io/fetch/' + ORIGINAL_SERVICES_CSV_URL;
 
 // Функция обновления счетчика корзины
 function updateCartBadge() {
