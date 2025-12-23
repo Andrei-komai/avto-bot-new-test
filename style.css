@@ -819,6 +819,74 @@ body::after {
 }
 
 /* Date Input Styling */
+.date-display-field {
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #0097a7;
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.date-display-field:hover {
+    border-color: #00bcd4;
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.date-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #0097a7;
+    border-radius: 10px;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.date-option-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #0097a7;
+    border-radius: 8px;
+    color: #fff;
+    padding: 12px 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.date-option-btn:hover {
+    background: rgba(0, 151, 167, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 151, 167, 0.3);
+}
+
+.date-option-btn.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.date-option-btn.selected {
+    background: linear-gradient(135deg, #0097a7 0%, #00bcd4 100%);
+    border-color: #00bcd4;
+    box-shadow: 0 4px 20px rgba(0, 188, 212, 0.5);
+}
+
 .form-group input[type="date"] {
     cursor: pointer;
     position: relative;

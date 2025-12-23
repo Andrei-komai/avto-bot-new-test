@@ -127,12 +127,9 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="booking-date-checkout"><i class="fas fa-calendar"></i> Дата записи *</label>
-                        <input 
-                            type="date" 
-                            id="booking-date-checkout" 
-                            name="booking-date-checkout" 
-                            required
-                            style="cursor: pointer;">
+                        <input type="hidden" id="booking-date-checkout" name="booking-date-checkout" required>
+                        <div id="booking-date-display" class="date-display-field">Выберите дату</div>
+                        <div id="booking-date-dropdown" class="date-dropdown" style="display: none;"></div>
                     </div>
 
                     <div class="form-group">

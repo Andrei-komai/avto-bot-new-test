@@ -904,18 +904,16 @@ console.log('Telegram WebApp готов:', tg.isReady);
  */
 function initCheckoutDatePicker() {
     const dateInput = document.getElementById('booking-date-checkout');
-    if (!dateInput) return;
-
-    // Убираем возможные блокировки
-    dateInput.removeAttribute('readonly');
-    dateInput.removeAttribute('disabled');
-    dateInput.style.pointerEvents = 'auto';
+    const dateDisplay = document.getElementById('booking-date-display');
+    const dateDropdown = document.getElementById('booking-date-dropdown');
+    
+    if (!dateInput || !dateDisplay || !dateDropdown) return;
 
     const today = new Date();
     const maxDate = new Date(today);
     maxDate.setDate(maxDate.getDate() + 27);
 
-    // Форматирование даты в YYYY-MM-DD
+    // Форматирование даты
     const formatDateToInput = (d) => {
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -923,45 +921,75 @@ function initCheckoutDatePicker() {
         return `${year}-${month}-${day}`;
     };
 
-    dateInput.min = formatDateToInput(today);
-    dateInput.max = formatDateToInput(maxDate);
-    dateInput.value = formatDateToInput(today);
+    const formatDateToDisplay = (d) => {
+        const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+        const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+        return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+    };
 
-    // Обработчик изменения даты
-    dateInput.addEventListener('change', function() {
-        const selectedValue = this.value;
-        if (!selectedValue) return;
-
-        const selected = new Date(selectedValue + 'T00:00:00');
-        const minDate = new Date(this.min + 'T00:00:00');
-        const maxDateLimit = new Date(this.max + 'T00:00:00');
-
-        // Проверка диапазона
-        if (selected < minDate || selected > maxDateLimit) {
-            this.value = formatDateToInput(today);
-            generateAndRenderTimeSlots(this.value);
-            return;
+    // Генерируем список дат
+    const dates = [];
+    const currentDate = new Date(today);
+    while (currentDate <= maxDate) {
+        if (currentDate.getDay() !== 0) { // Пропускаем воскресенья
+            dates.push(new Date(currentDate));
         }
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
 
-        // Проверка на воскресенье
-        if (selected.getDay() === 0) {
-            // Находим следующий понедельник
-            const nextDay = new Date(selected);
-            nextDay.setDate(selected.getDate() + 1);
+    // Заполняем выпадающий список
+    dateDropdown.innerHTML = '';
+    dates.forEach(date => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'date-option-btn';
+        btn.textContent = formatDateToDisplay(date);
+        btn.dataset.value = formatDateToInput(date);
+        
+        btn.addEventListener('click', () => {
+            // Убираем выделение со всех кнопок
+            dateDropdown.querySelectorAll('.date-option-btn').forEach(b => {
+                b.classList.remove('selected');
+            });
             
-            if (nextDay <= maxDateLimit) {
-                this.value = formatDateToInput(nextDay);
-            } else {
-                // Если понедельник выходит за пределы, берем предыдущую пятницу
-                const prevFriday = new Date(selected);
-                prevFriday.setDate(selected.getDate() - 2);
-                this.value = formatDateToInput(prevFriday);
-            }
-        }
+            // Выделяем текущую
+            btn.classList.add('selected');
+            
+            // Сохраняем значение
+            dateInput.value = btn.dataset.value;
+            dateDisplay.textContent = btn.textContent;
+            
+            // Скрываем выпадающий список
+            dateDropdown.style.display = 'none';
+            
+            // Генерируем слоты времени
+            generateAndRenderTimeSlots(btn.dataset.value);
+            validateCheckoutForm();
+        });
+        
+        dateDropdown.appendChild(btn);
+    });
 
-        // Генерируем слоты для выбранной даты
-        generateAndRenderTimeSlots(this.value);
-        validateCheckoutForm();
+    // Устанавливаем сегодняшнюю дату по умолчанию
+    dateInput.value = formatDateToInput(today);
+    dateDisplay.textContent = formatDateToDisplay(today);
+    
+    // Выделяем первую кнопку
+    if (dateDropdown.firstChild) {
+        dateDropdown.firstChild.classList.add('selected');
+    }
+
+    // Обработчик клика по полю отображения
+    dateDisplay.addEventListener('click', () => {
+        const isVisible = dateDropdown.style.display === 'block';
+        dateDropdown.style.display = isVisible ? 'none' : 'block';
+    });
+
+    // Закрытие при клике вне
+    document.addEventListener('click', (e) => {
+        if (!dateDisplay.contains(e.target) && !dateDropdown.contains(e.target)) {
+            dateDropdown.style.display = 'none';
+        }
     });
 
     // Генерируем слоты для текущей даты
