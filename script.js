@@ -906,6 +906,11 @@ function initCheckoutDatePicker() {
     const dateInput = document.getElementById('booking-date-checkout');
     if (!dateInput) return;
 
+    // Убираем возможные блокировки
+    dateInput.removeAttribute('readonly');
+    dateInput.removeAttribute('disabled');
+    dateInput.style.pointerEvents = 'auto';
+
     const today = new Date();
     const maxDate = new Date(today);
     maxDate.setDate(maxDate.getDate() + 27);

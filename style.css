@@ -818,6 +818,23 @@ body::after {
     color: #888;
 }
 
+/* Date Input Styling */
+.form-group input[type="date"] {
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 1;
+    background: transparent;
+    color: #0097a7;
+    filter: invert(59%) sepia(85%) saturate(2076%) hue-rotate(157deg) brightness(92%) contrast(101%);
+    width: 20px;
+    height: 20px;
+}
+
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
