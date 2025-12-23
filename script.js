@@ -653,7 +653,7 @@ function confirmOrder() {
     renderCheckoutItems();
     
     // Инициализируем выбор даты/времени
-    initBookingDateRange();
+    initCheckoutDatePicker();
     
     // Проверяем валидность формы
     validateCheckoutForm();
@@ -715,7 +715,7 @@ function submitOrder() {
     const name = document.getElementById('customer-name').value.trim();
     const phone = document.getElementById('customer-phone').value.trim();
     const email = document.getElementById('customer-email').value.trim();
-    const date = document.getElementById('booking-date').value;
+    const date = document.getElementById('booking-date-checkout').value;
     const time = document.getElementById('booking-time').value;
     const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
     
@@ -864,7 +864,7 @@ document.getElementById('cart-button').addEventListener('click', showCart);
 function validateCheckoutForm() {
     const name = document.getElementById('customer-name');
     const phone = document.getElementById('customer-phone');
-    const date = document.getElementById('booking-date');
+    const date = document.getElementById('booking-date-checkout');
     const time = document.getElementById('booking-time');
     const submitBtn = document.getElementById('confirm-checkout-btn');
     
@@ -882,7 +882,6 @@ function validateCheckoutForm() {
 document.addEventListener('DOMContentLoaded', () => {
     const nameInput = document.getElementById('customer-name');
     const phoneInput = document.getElementById('customer-phone');
-    const dateInput = document.getElementById('booking-date');
     
     if (nameInput) {
         nameInput.addEventListener('input', validateCheckoutForm);
@@ -891,48 +890,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (phoneInput) {
         phoneInput.addEventListener('input', validateCheckoutForm);
     }
-
-    if (dateInput) {
-        dateInput.addEventListener('change', (e) => {
-            const selectedDate = new Date(e.target.value + 'T00:00:00');
-            
-            // Проверка на воскресенье
-            if (isWeekend(selectedDate)) {
-                alert('В воскресенье сервис не работает, выберите другой день.');
-                
-                // Находим следующий понедельник
-                const nextMonday = new Date(selectedDate);
-                nextMonday.setDate(selectedDate.getDate() + 1);
-                
-                // Проверяем, что понедельник в пределах max
-                const maxDate = new Date(dateInput.max + 'T00:00:00');
-                if (nextMonday <= maxDate) {
-                    const year = nextMonday.getFullYear();
-                    const month = String(nextMonday.getMonth() + 1).padStart(2, '0');
-                    const day = String(nextMonday.getDate()).padStart(2, '0');
-                    dateInput.value = `${year}-${month}-${day}`;
-                } else {
-                    // Если понедельник выходит за пределы, ставим предыдущую пятницу
-                    const prevFriday = new Date(selectedDate);
-                    prevFriday.setDate(selectedDate.getDate() - 2);
-                    const year = prevFriday.getFullYear();
-                    const month = String(prevFriday.getMonth() + 1).padStart(2, '0');
-                    const day = String(prevFriday.getDate()).padStart(2, '0');
-                    dateInput.value = `${year}-${month}-${day}`;
-                }
-                
-                // Генерируем слоты для новой даты
-                generateAndRenderTimeSlots(dateInput.value);
-            } else {
-                // Обычная логика для рабочих дней
-                validateCheckoutForm();
-                generateAndRenderTimeSlots(e.target.value);
-            }
-        });
-    }
-    
-    // Инициализация диапазона дат
-    initBookingDateRange();
 });
 
 // Инициализация при загрузке
@@ -943,39 +900,67 @@ console.log('Telegram WebApp готов:', tg.isReady);
 // === BOOKING DATE/TIME FUNCTIONS ===
 
 /**
- * Инициализация диапазона дат для записи (сегодня + 27 дней)
+ * Инициализация выбора даты в форме checkout
  */
-function initBookingDateRange() {
-    const bookingDateInput = document.getElementById('booking-date');
-    if (!bookingDateInput) return;
+function initCheckoutDatePicker() {
+    const dateInput = document.getElementById('booking-date-checkout');
+    if (!dateInput) return;
 
     const today = new Date();
-    const maxDate = new Date();
-    maxDate.setDate(today.getDate() + 27);
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 27);
 
-    // Форматируем в YYYY-MM-DD для input[type="date"]
-    const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+    // Форматирование даты в YYYY-MM-DD
+    const formatDateToInput = (d) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
 
-    bookingDateInput.min = formatDate(today);
-    bookingDateInput.max = formatDate(maxDate);
-    bookingDateInput.value = formatDate(today);
+    dateInput.min = formatDateToInput(today);
+    dateInput.max = formatDateToInput(maxDate);
+    dateInput.value = formatDateToInput(today);
+
+    // Обработчик изменения даты
+    dateInput.addEventListener('change', function() {
+        const selectedValue = this.value;
+        if (!selectedValue) return;
+
+        const selected = new Date(selectedValue + 'T00:00:00');
+        const minDate = new Date(this.min + 'T00:00:00');
+        const maxDateLimit = new Date(this.max + 'T00:00:00');
+
+        // Проверка диапазона
+        if (selected < minDate || selected > maxDateLimit) {
+            this.value = formatDateToInput(today);
+            generateAndRenderTimeSlots(this.value);
+            return;
+        }
+
+        // Проверка на воскресенье
+        if (selected.getDay() === 0) {
+            // Находим следующий понедельник
+            const nextDay = new Date(selected);
+            nextDay.setDate(selected.getDate() + 1);
+            
+            if (nextDay <= maxDateLimit) {
+                this.value = formatDateToInput(nextDay);
+            } else {
+                // Если понедельник выходит за пределы, берем предыдущую пятницу
+                const prevFriday = new Date(selected);
+                prevFriday.setDate(selected.getDate() - 2);
+                this.value = formatDateToInput(prevFriday);
+            }
+        }
+
+        // Генерируем слоты для выбранной даты
+        generateAndRenderTimeSlots(this.value);
+        validateCheckoutForm();
+    });
 
     // Генерируем слоты для текущей даты
-    generateAndRenderTimeSlots(bookingDateInput.value);
-}
-
-/**
- * Проверяет, является ли дата воскресеньем
- * @param {Date} date - объект Date
- * @returns {boolean} true если воскресенье
- */
-function isWeekend(date) {
-    return date.getDay() === 0;
+    generateAndRenderTimeSlots(dateInput.value);
 }
 
 /**
