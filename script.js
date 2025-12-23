@@ -652,6 +652,12 @@ function confirmOrder() {
     // Отображаем товары в форме оформления
     renderCheckoutItems();
     
+    // Инициализируем выбор даты/времени
+    initBookingDateRange();
+    
+    // Проверяем валидность формы
+    validateCheckoutForm();
+    
     // Вибрация
     if (tg.HapticFeedback) {
         tg.HapticFeedback.selectionChanged();
@@ -710,12 +716,17 @@ function submitOrder() {
     const phone = document.getElementById('customer-phone').value.trim();
     const email = document.getElementById('customer-email').value.trim();
     const date = document.getElementById('appointment-date').value;
-    const time = document.getElementById('appointment-time').value;
+    const time = document.getElementById('booking-time').value;
     const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
     
     // Проверка обязательных полей
     if (!name || !phone) {
         tg.showAlert('Заполните обязательные поля: ФИО и Телефон');
+        return;
+    }
+    
+    if (!date || !time) {
+        tg.showAlert('Выберите дату и время записи');
         return;
     }
     
@@ -853,11 +864,17 @@ document.getElementById('cart-button').addEventListener('click', showCart);
 function validateCheckoutForm() {
     const name = document.getElementById('customer-name');
     const phone = document.getElementById('customer-phone');
+    const date = document.getElementById('appointment-date');
+    const time = document.getElementById('booking-time');
     const submitBtn = document.getElementById('confirm-checkout-btn');
     
     if (!name || !phone || !submitBtn) return;
     
-    const isValid = name.value.trim() !== '' && phone.value.trim() !== '';
+    const isValid = name.value.trim() !== '' && 
+                    phone.value.trim() !== '' &&
+                    date && date.value.trim() !== '' &&
+                    time && time.value.trim() !== '';
+    
     submitBtn.disabled = !isValid;
 }
 
@@ -865,6 +882,7 @@ function validateCheckoutForm() {
 document.addEventListener('DOMContentLoaded', () => {
     const nameInput = document.getElementById('customer-name');
     const phoneInput = document.getElementById('customer-phone');
+    const dateInput = document.getElementById('appointment-date');
     
     if (nameInput) {
         nameInput.addEventListener('input', validateCheckoutForm);
@@ -873,6 +891,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (phoneInput) {
         phoneInput.addEventListener('input', validateCheckoutForm);
     }
+
+    if (dateInput) {
+        dateInput.addEventListener('change', (e) => {
+            validateCheckoutForm();
+            generateAndRenderTimeSlots(e.target.value);
+        });
+    }
+    
+    // Инициализация диапазона дат
+    initBookingDateRange();
 });
 
 // Инициализация при загрузке
@@ -880,3 +908,169 @@ updateCartBadge();
 
 console.log('AutoService Pro WebApp загружен');
 console.log('Telegram WebApp готов:', tg.isReady);
+// === BOOKING DATE/TIME FUNCTIONS ===
+
+/**
+ * Инициализация диапазона дат для записи (сегодня + 27 дней)
+ */
+function initBookingDateRange() {
+    const dateInput = document.getElementById('appointment-date');
+    if (!dateInput) return;
+
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(today.getDate() + 27);
+
+    // Форматируем в YYYY-MM-DD для input[type="date"]
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    dateInput.min = formatDate(today);
+    dateInput.max = formatDate(maxDate);
+    
+    // Устанавливаем сегодня по умолчанию
+    if (!dateInput.value) {
+        dateInput.value = formatDate(today);
+    }
+
+    // Генерируем слоты для текущей даты
+    generateAndRenderTimeSlots(dateInput.value);
+}
+
+/**
+ * Получить рабочие часы для конкретной даты
+ * @param {string} dateStr - дата в формате YYYY-MM-DD
+ * @returns {Object|null} {start: 9, end: 18} или null если выходной
+ */
+function getWorkingHoursForDate(dateStr) {
+    const date = new Date(dateStr + 'T00:00:00');
+    const dayOfWeek = date.getDay(); // 0 = Воскресенье, 6 = Суббота
+
+    if (dayOfWeek === 0) {
+        // Воскресенье - выходной
+        return null;
+    } else if (dayOfWeek === 6) {
+        // Суббота: 10:00 - 16:00
+        return { start: 10, end: 16 };
+    } else {
+        // Понедельник-Пятница: 09:00 - 18:00
+        return { start: 9, end: 18 };
+    }
+}
+
+/**
+ * Генерирует массив временных слотов для указанной даты
+ * @param {string} dateStr - дата в формате YYYY-MM-DD
+ * @returns {Array} массив слотов [{time: "09:00", disabled: false}, ...]
+ */
+function generateTimeSlotsForDate(dateStr) {
+    const workingHours = getWorkingHoursForDate(dateStr);
+    
+    if (!workingHours) {
+        return []; // Выходной день
+    }
+
+    const slots = [];
+    const selectedDate = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    const isToday = selectedDate.toDateString() === today.toDateString();
+
+    // Генерируем слоты с шагом 30 минут
+    for (let hour = workingHours.start; hour < workingHours.end; hour++) {
+        for (let minute = 0; minute < 60; minute += 30) {
+            const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+            
+            let disabled = false;
+            
+            // Если это сегодня, проверяем, не прошло ли время
+            if (isToday) {
+                const currentHour = today.getHours();
+                const currentMinute = today.getMinutes();
+                
+                if (hour < currentHour || (hour === currentHour && minute <= currentMinute)) {
+                    disabled = true;
+                }
+            }
+            
+            slots.push({ time: timeStr, disabled });
+        }
+    }
+
+    return slots;
+}
+
+/**
+ * Рендерит временные слоты в контейнере
+ * @param {Array} slots - массив слотов
+ */
+function renderTimeSlots(slots) {
+    const container = document.getElementById('booking-time-slots');
+    const hiddenInput = document.getElementById('booking-time');
+    
+    if (!container) return;
+
+    // Очищаем контейнер
+    container.innerHTML = '';
+
+    if (slots.length === 0) {
+        container.innerHTML = '<p style="color: #888; text-align: center; grid-column: 1 / -1;">В этот день не работаем</p>';
+        if (hiddenInput) hiddenInput.value = '';
+        return;
+    }
+
+    // Создаем кнопки для каждого слота
+    slots.forEach(slot => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'time-slot-btn';
+        btn.textContent = slot.time;
+        
+        if (slot.disabled) {
+            btn.classList.add('disabled');
+        } else {
+            btn.addEventListener('click', () => {
+                // Убираем выделение со всех кнопок
+                container.querySelectorAll('.time-slot-btn').forEach(b => {
+                    b.classList.remove('selected');
+                });
+                
+                // Выделяем текущую кнопку
+                btn.classList.add('selected');
+                
+                // Сохраняем значение в скрытое поле
+                if (hiddenInput) {
+                    hiddenInput.value = slot.time;
+                    // Вызываем валидацию формы
+                    validateCheckoutForm();
+                }
+            });
+        }
+        
+        container.appendChild(btn);
+    });
+
+    // Если уже было выбрано время, восстанавливаем выделение
+    if (hiddenInput && hiddenInput.value) {
+        const selectedBtn = Array.from(container.querySelectorAll('.time-slot-btn'))
+            .find(btn => btn.textContent === hiddenInput.value);
+        if (selectedBtn && !selectedBtn.classList.contains('disabled')) {
+            selectedBtn.classList.add('selected');
+        } else {
+            // Если выбранное время недоступно, сбрасываем
+            hiddenInput.value = '';
+        }
+    }
+}
+
+/**
+ * Генерирует и рендерит слоты для указанной даты
+ * @param {string} dateStr - дата в формате YYYY-MM-DD
+ */
+function generateAndRenderTimeSlots(dateStr) {
+    const slots = generateTimeSlotsForDate(dateStr);
+    renderTimeSlots(slots);
+}

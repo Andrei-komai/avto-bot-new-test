@@ -824,6 +824,48 @@ body::after {
     gap: 15px;
 }
 
+/* Time Slots Styling */
+.time-slots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.time-slot-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #0097a7;
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.time-slot-btn:hover {
+    background: rgba(0, 151, 167, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 151, 167, 0.3);
+}
+
+.time-slot-btn.selected {
+    background: linear-gradient(135deg, #0097a7 0%, #00bcd4 100%);
+    border-color: #00bcd4;
+    box-shadow: 0 4px 20px rgba(0, 188, 212, 0.5);
+}
+
+.time-slot-btn.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .payment-options {
     display: flex;
     flex-direction: column;
