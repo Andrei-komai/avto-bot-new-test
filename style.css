@@ -794,6 +794,7 @@ body::after {
 
 .form-group label i {
     color: #0097a7;
+    pointer-events: none;
 }
 
 .form-group input {
