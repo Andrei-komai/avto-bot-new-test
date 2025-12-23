@@ -781,6 +781,7 @@ body::after {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    position: relative;
 }
 
 .form-group label {
@@ -839,52 +840,104 @@ body::after {
 
 .date-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 5px);
     left: 0;
     right: 0;
-    margin-top: 5px;
     background: rgba(0, 0, 0, 0.95);
     border: 2px solid #0097a7;
     border-radius: 10px;
-    padding: 10px;
-    max-height: 300px;
-    overflow-y: auto;
+    padding: 15px;
     z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0, 151, 167, 0.3);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    color: #fff;
+    font-weight: 600;
+}
+
+.calendar-nav-btn {
+    background: rgba(0, 151, 167, 0.2);
+    border: 1px solid #0097a7;
+    border-radius: 5px;
+    color: #00bcd4;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.calendar-nav-btn:hover {
+    background: rgba(0, 151, 167, 0.4);
+}
+
+.calendar-weekdays {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.calendar-weekday {
+    color: #0097a7;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 5px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
 }
 
 .date-option-btn {
     background: rgba(255, 255, 255, 0.05);
-    border: 2px solid #0097a7;
-    border-radius: 8px;
+    border: 1px solid #0097a7;
+    border-radius: 6px;
     color: #fff;
-    padding: 12px 8px;
+    padding: 10px 5px;
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
     font-family: 'Montserrat', sans-serif;
+    min-height: 40px;
 }
 
-.date-option-btn:hover {
-    background: rgba(0, 151, 167, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 151, 167, 0.3);
+.date-option-btn:hover:not(.disabled):not(.empty) {
+    background: rgba(0, 151, 167, 0.3);
+    transform: scale(1.05);
 }
 
 .date-option-btn.disabled {
-    opacity: 0.3;
+    opacity: 0.2;
     cursor: not-allowed;
     pointer-events: none;
+    color: #555;
+}
+
+.date-option-btn.empty {
+    opacity: 0;
+    pointer-events: none;
+    border: none;
+}
+
+.date-option-btn.today {
+    border-color: #00bcd4;
+    color: #00bcd4;
 }
 
 .date-option-btn.selected {
     background: linear-gradient(135deg, #0097a7 0%, #00bcd4 100%);
     border-color: #00bcd4;
-    box-shadow: 0 4px 20px rgba(0, 188, 212, 0.5);
+    box-shadow: 0 2px 10px rgba(0, 188, 212, 0.5);
+    color: #fff;
 }
 
 .form-group input[type="date"] {

@@ -910,8 +910,8 @@ function initCheckoutDatePicker() {
     if (!dateInput || !dateDisplay || !dateDropdown) return;
 
     const today = new Date();
-    const maxDate = new Date(today);
-    maxDate.setDate(maxDate.getDate() + 27);
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
 
     // Форматирование даты
     const formatDateToInput = (d) => {
@@ -927,61 +927,124 @@ function initCheckoutDatePicker() {
         return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
     };
 
-    // Генерируем список дат
-    const dates = [];
-    const currentDate = new Date(today);
-    while (currentDate <= maxDate) {
-        if (currentDate.getDay() !== 0) { // Пропускаем воскресенья
-            dates.push(new Date(currentDate));
-        }
-        currentDate.setDate(currentDate.getDate() + 1);
-    }
+    const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
-    // Заполняем выпадающий список
-    dateDropdown.innerHTML = '';
-    dates.forEach(date => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'date-option-btn';
-        btn.textContent = formatDateToDisplay(date);
-        btn.dataset.value = formatDateToInput(date);
-        
-        btn.addEventListener('click', () => {
-            // Убираем выделение со всех кнопок
-            dateDropdown.querySelectorAll('.date-option-btn').forEach(b => {
-                b.classList.remove('selected');
-            });
-            
-            // Выделяем текущую
-            btn.classList.add('selected');
-            
-            // Сохраняем значение
-            dateInput.value = btn.dataset.value;
-            dateDisplay.textContent = btn.textContent;
-            
-            // Скрываем выпадающий список
-            dateDropdown.style.display = 'none';
-            
-            // Генерируем слоты времени
-            generateAndRenderTimeSlots(btn.dataset.value);
-            validateCheckoutForm();
+    // Функция отрисовки календаря
+    const renderCalendar = () => {
+        const maxDate = new Date(today);
+        maxDate.setDate(today.getDate() + 27);
+
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const firstDayOfWeek = firstDay.getDay();
+        const daysInMonth = lastDay.getDate();
+
+        let html = `
+            <div class="calendar-header">
+                <button type="button" class="calendar-nav-btn" id="prev-month">&larr;</button>
+                <div>${monthNames[currentMonth]} ${currentYear}</div>
+                <button type="button" class="calendar-nav-btn" id="next-month">&rarr;</button>
+            </div>
+            <div class="calendar-weekdays">
+                <div class="calendar-weekday">Пн</div>
+                <div class="calendar-weekday">Вт</div>
+                <div class="calendar-weekday">Ср</div>
+                <div class="calendar-weekday">Чт</div>
+                <div class="calendar-weekday">Пт</div>
+                <div class="calendar-weekday">Сб</div>
+                <div class="calendar-weekday">Вс</div>
+            </div>
+            <div class="calendar-days">
+        `;
+
+        // Пустые ячейки до начала месяца (конвертируем: 0=Вс -> 6, 1=Пн -> 0)
+        const startOffset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+        for (let i = 0; i < startOffset; i++) {
+            html += '<button type="button" class="date-option-btn empty"></button>';
+        }
+
+        // Дни месяца
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(currentYear, currentMonth, day);
+            const dateStr = formatDateToInput(date);
+            const isToday = date.toDateString() === today.toDateString();
+            const isSunday = date.getDay() === 0;
+            const isPast = date < today;
+            const isFuture = date > maxDate;
+            const isDisabled = isSunday || isPast || isFuture;
+
+            let classes = 'date-option-btn';
+            if (isDisabled) classes += ' disabled';
+            if (isToday) classes += ' today';
+            if (dateInput.value === dateStr) classes += ' selected';
+
+            html += `<button type="button" class="${classes}" data-date="${dateStr}">${day}</button>`;
+        }
+
+        html += '</div>';
+        dateDropdown.innerHTML = html;
+
+        // Обработчики для кнопок навигации
+        document.getElementById('prev-month')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentMonth === 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+            renderCalendar();
         });
-        
-        dateDropdown.appendChild(btn);
-    });
+
+        document.getElementById('next-month')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentMonth === 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+            renderCalendar();
+        });
+
+        // Обработчики для дат
+        dateDropdown.querySelectorAll('.date-option-btn:not(.disabled):not(.empty)').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const selectedDate = btn.dataset.date;
+                const date = new Date(selectedDate + 'T00:00:00');
+
+                // Убираем выделение
+                dateDropdown.querySelectorAll('.date-option-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+
+                // Сохраняем значение
+                dateInput.value = selectedDate;
+                dateDisplay.textContent = formatDateToDisplay(date);
+
+                // Скрываем календарь
+                dateDropdown.style.display = 'none';
+
+                // Генерируем слоты времени
+                generateAndRenderTimeSlots(selectedDate);
+                validateCheckoutForm();
+            });
+        });
+    };
 
     // Устанавливаем сегодняшнюю дату по умолчанию
     dateInput.value = formatDateToInput(today);
     dateDisplay.textContent = formatDateToDisplay(today);
-    
-    // Выделяем первую кнопку
-    if (dateDropdown.firstChild) {
-        dateDropdown.firstChild.classList.add('selected');
-    }
 
     // Обработчик клика по полю отображения
-    dateDisplay.addEventListener('click', () => {
+    dateDisplay.addEventListener('click', (e) => {
+        e.stopPropagation();
         const isVisible = dateDropdown.style.display === 'block';
+        if (!isVisible) {
+            currentMonth = today.getMonth();
+            currentYear = today.getFullYear();
+            renderCalendar();
+        }
         dateDropdown.style.display = isVisible ? 'none' : 'block';
     });
 
