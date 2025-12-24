@@ -840,10 +840,9 @@ body::after {
 
 .date-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 2px);
     left: 0;
     right: 0;
-    margin-top: 0;
     background: rgba(0, 0, 0, 0.95);
     border: 2px solid #0097a7;
     border-radius: 10px;
