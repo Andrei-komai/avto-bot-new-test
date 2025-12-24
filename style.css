@@ -843,7 +843,7 @@ body::after {
     top: 100%;
     left: 0;
     right: 0;
-    margin-top: 2px;
+    margin-top: 0;
     background: rgba(0, 0, 0, 0.95);
     border: 2px solid #0097a7;
     border-radius: 10px;
