@@ -1773,3 +1773,23 @@ body::after {
         font-size: 1rem;
     }
 }
+
+/* Фикс для календаря: центрируем его на экране поверх всего */
+.date-dropdown,
+.air-datepicker, 
+.datepicker, 
+.flatpickr-calendar {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
+}
+
+/* Затемнение фона при открытии (если его нет) */
+.air-datepicker--overlay {
+    background: rgba(0,0,0,0.5);
+    z-index: 9990;
+}
