@@ -797,7 +797,8 @@ function renderCheckoutItems() {
 }
 
 // Отправка заказа
-function submitOrder() {
+// Отправка заказа
+async function submitOrder() {
     const form = document.getElementById('checkout-form');
     const name = document.getElementById('customer-name').value.trim();
     const phone = document.getElementById('customer-phone').value.trim();
@@ -823,39 +824,89 @@ function submitOrder() {
         total += parseFloat(item.price) || 0;
     });
     
+    // Собираем полные данные заказа для отправки
     const orderData = {
         customer: {
             name: name,
             phone: phone,
-            email: email,
+            email: email || '',
             date: date,
             time: time
         },
         paymentMethod: paymentMethod,
-        items: cart,
-        total: total
+        items: cart.map(item => ({
+            title: item.title,
+            price: item.price,
+            category: item.category || 'Товар'
+        })),
+        total: total,
+        timestamp: new Date().toISOString()
     };
     
-    // Скрываем форму
-    const checkoutSection = document.getElementById('checkout-section');
-    if (checkoutSection) {
-        checkoutSection.style.display = 'none';
-    }
+    // Показываем лоадер
+    showLoader('Оформляем заказ...');
     
-    // Если оплата картой - показываем имитацию
-    if (paymentMethod === 'card') {
-        const paymentStub = document.getElementById('payment-stub-section');
-        if (paymentStub) {
-            paymentStub.style.display = 'flex';
+    try {
+        // Отправляем заказ на сервер Make.com
+        const response = await fetch('https://hook.eu2.make.com/e84kjy57b85quotfiddl4atcshywyva9', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        // Имитация обработки платежа
-        setTimeout(() => {
-            finishOrder(orderData);
-        }, 2000);
-    } else {
-        // Наличными - сразу завершаем
-        finishOrder(orderData);
+        // Успешная отправка
+        console.log('Заказ успешно отправлен:', orderData);
+        
+        // Скрываем лоадер
+        hideLoader();
+        
+        // Скрываем форму
+        const checkoutSection = document.getElementById('checkout-section');
+        if (checkoutSection) {
+            checkoutSection.style.display = 'none';
+        }
+        
+        // Показываем экран успеха
+        const successSection = document.getElementById('success-section');
+        if (successSection) {
+            successSection.style.display = 'flex';
+        }
+        
+        // Отправляем данные в Telegram (если нужно)
+        try {
+            tg.sendData(JSON.stringify(orderData));
+        } catch (e) {
+            console.log('Telegram sendData not available:', e);
+        }
+        
+        // Очищаем корзину
+        cart = [];
+        localStorage.removeItem('cart');
+        updateCartBadge();
+        
+        // Вибрация успеха
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+        
+    } catch (error) {
+        console.error('Ошибка при отправке заказа:', error);
+        
+        // Скрываем лоадер
+        hideLoader();
+        
+        // Показываем ошибку
+        if (tg.showAlert) {
+            tg.showAlert('Ошибка при отправке заказа. Попробуйте еще раз.');
+        } else {
+            alert('Ошибка при отправке заказа. Попробуйте еще раз.');
+        }
     }
 }
 
