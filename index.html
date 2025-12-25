@@ -117,6 +117,10 @@
         </div>
         <div class="checkout-content">
             <form id="checkout-form" class="checkout-form">
+                <!-- Скрытые поля для Telegram данных -->
+                <input type="hidden" id="tg-id" name="tg_id" value="">
+                <input type="hidden" id="tg-username" name="tg_username" value="">
+                
                 <div class="form-group">
                     <label for="customer-name"><i class="fas fa-user"></i> ФИО *</label>
                     <input type="text" id="customer-name" name="name" required placeholder="Введите ваше полное имя">

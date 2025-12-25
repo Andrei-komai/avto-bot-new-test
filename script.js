@@ -12,6 +12,38 @@ let busySlots = [];
 let allProducts = [];
 let allServices = [];
 
+// Инициализация Telegram данных пользователя
+function initTelegramUserData() {
+    let tgId = '';
+    let tgUsername = '';
+    
+    // Пытаемся получить данные из Telegram WebApp
+    try {
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            tgId = tg.initDataUnsafe.user.id || '';
+            tgUsername = tg.initDataUnsafe.user.username || '';
+        }
+    } catch (e) {
+        console.log('Telegram user data not available from WebApp:', e);
+    }
+    
+    // Если не получилось, пытаемся из URL параметров
+    if (!tgId || !tgUsername) {
+        const urlParams = new URLSearchParams(window.location.search);
+        tgId = tgId || urlParams.get('tg_id') || '';
+        tgUsername = tgUsername || urlParams.get('username') || '';
+    }
+    
+    // Заполняем скрытые поля в форме
+    const tgIdField = document.getElementById('tg-id');
+    const tgUsernameField = document.getElementById('tg-username');
+    
+    if (tgIdField) tgIdField.value = tgId;
+    if (tgUsernameField) tgUsernameField.value = tgUsername;
+    
+    console.log('Telegram user data initialized:', { tgId, tgUsername });
+}
+
 // Элементы DOM
 const cartButton = document.getElementById('cart-button');
 const cartBadge = document.getElementById('cart-badge');
@@ -786,7 +818,7 @@ function renderCheckoutItems() {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'checkout-item';
         itemDiv.innerHTML = `
-            <span class="checkout-item-title">${item.title}</span>
+            <span class="checkout-item-title">${item.title || item.name || 'Товар'}</span>
             <span class="checkout-item-price">${item.price} ₽</span>
         `;
         
@@ -806,6 +838,10 @@ async function submitOrder() {
     const date = document.getElementById('booking-date-checkout').value;
     const time = document.getElementById('booking-time').value;
     const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+    
+    // Получаем Telegram данные
+    const tgId = document.getElementById('tg-id').value;
+    const tgUsername = document.getElementById('tg-username').value;
     
     // Проверка обязательных полей
     if (!name || !phone) {
@@ -833,9 +869,13 @@ async function submitOrder() {
             date: date,
             time: time
         },
+        telegram: {
+            tg_id: tgId,
+            username: tgUsername
+        },
         paymentMethod: paymentMethod,
         items: cart.map(item => ({
-            title: item.title,
+            title: item.title || item.name || 'Товар',
             price: item.price,
             category: item.category || 'Товар'
         })),
@@ -1028,6 +1068,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (phoneInput) {
         phoneInput.addEventListener('input', validateCheckoutForm);
     }
+    
+    // Инициализируем Telegram данные
+    initTelegramUserData();
 });
 
 // Инициализация при загрузке
