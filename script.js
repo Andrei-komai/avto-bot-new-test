@@ -5,6 +5,9 @@ tg.expand();
 // Корзина
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+// Глобальная переменная для занятых слотов
+let busySlots = [];
+
 // Данные товаров и услуг
 let allProducts = [];
 let allServices = [];
@@ -630,13 +633,97 @@ function removeFromCart(index) {
     }
 }
 
+// Функции управления лоадером
+function showLoader(message = 'Загрузка...') {
+    const loader = document.getElementById('calendar-loader');
+    const loaderMessage = document.getElementById('loader-message');
+    
+    if (loader) {
+        if (loaderMessage) {
+            loaderMessage.textContent = message;
+        }
+        loader.style.display = 'flex';
+    }
+}
+
+function hideLoader() {
+    const loader = document.getElementById('calendar-loader');
+    if (loader) {
+        loader.style.display = 'none';
+    }
+}
+
+// Проверка доступности слотов через Make.com
+async function checkAvailableSlots(date) {
+    const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/ig3c328ypb5wuxq9nleyhw4wl4qas4en';
+    
+    try {
+        const response = await fetch(MAKE_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ checkDate: date })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Ошибка при проверке слотов:', error);
+        throw error;
+    }
+}
+
 // Подтверждение заказа - переход к оформлению
-function confirmOrder() {
+async function confirmOrder() {
     if (cart.length === 0) {
         tg.showAlert('Корзина пуста');
         return;
     }
     
+    // Показываем лоадер
+    showLoader('Проверяем свободное время...');
+    
+    try {
+        // Получаем текущую дату для проверки
+        const today = new Date();
+        const checkDate = today.toISOString().split('T')[0]; // Формат YYYY-MM-DD
+        
+        // Запрашиваем занятые слоты
+        const data = await checkAvailableSlots(checkDate);
+        
+        // Сохраняем занятые слоты
+        busySlots = data;
+        console.log('Полученные данные о занятых слотах:', data);
+        
+        // Скрываем лоадер
+        hideLoader();
+        
+        // Показываем форму оформления
+        showCheckoutForm();
+        
+    } catch (error) {
+        // Скрываем лоадер
+        hideLoader();
+        
+        // Показываем ошибку
+        if (tg.showAlert) {
+            tg.showAlert('Не удалось загрузить расписание. Попробуйте позже.');
+        } else {
+            alert('Не удалось загрузить расписание. Попробуйте позже.');
+        }
+        
+        // Можно все равно показать форму (опционально)
+        // showCheckoutForm();
+    }
+}
+
+// Показ формы оформления (вынесено в отдельную функцию)
+function showCheckoutForm() {
     // Скрываем корзину
     const cartPage = document.getElementById('cart-page');
     if (cartPage) {
@@ -664,7 +751,7 @@ function confirmOrder() {
     }
 }
 
-// Вернуться в корзину из формы оформления
+// Вернуться в корзину из формы оформления (старая функция backToCart)
 function backToCart() {
     const checkoutSection = document.getElementById('checkout-section');
     if (checkoutSection) {
