@@ -73,17 +73,30 @@ function updateCartBadge() {
 
 // Функция добавления товара в корзину
 function addToCart(item) {
+    // Извлекаем название из разных возможных полей
+    const productTitle = item['Название'] || item['Название услуги'] || item.title || item.name || 'Без названия';
+    
+    // Извлекаем цену
+    const productPrice = item['Цена'] || item.price || '0';
+    
+    // Извлекаем категорию
+    const productCategory = item['Категория'] || item.category || 'Товар';
+    
+    // Извлекаем ID
+    const productId = item.ID || item.id || '';
+    
     // Проверяем, есть ли уже такой товар
     const existingIndex = cart.findIndex(cartItem => 
-        cartItem.title === item.title && cartItem.price === item.price
+        cartItem.title === productTitle && cartItem.price === productPrice
     );
     
     if (existingIndex === -1) {
-        // Добавляем новый товар
+        // Добавляем новый товар с правильными данными
         cart.push({
-            title: item.title,
-            price: item.price,
-            category: item.category || 'Товар'
+            id: productId,
+            title: productTitle,
+            price: productPrice,
+            category: productCategory
         });
     }
     
@@ -630,7 +643,7 @@ function renderCart() {
         cartItem.className = 'cart-item';
         cartItem.innerHTML = `
             <div class="cart-item-info">
-                <div class="cart-item-title">${item.title}</div>
+                <div class="cart-item-title">${item.title || item.name || 'Товар'}</div>
                 <div class="cart-item-category">${item.category}</div>
             </div>
             <div class="cart-item-price">${item.price} ₽</div>
