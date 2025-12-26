@@ -1393,7 +1393,7 @@ body::after {
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.95);
-    padding: 15px 20px;
+    padding: 50px 20px 15px;
     z-index: 110;
     backdrop-filter: blur(10px);
 }
@@ -1589,7 +1589,7 @@ body::after {
     #services-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 10px;
-        padding: 140px 15px 15px;
+        padding: 180px 15px 15px;
     }
 
     .parts-title {
@@ -1597,11 +1597,11 @@ body::after {
     }
     
     .parts-header {
-        padding: 12px 15px;
+        padding: 45px 15px 12px;
     }
     
     .search-container {
-        top: 70px;
+        top: 100px;
     }
 
     .back-button {
@@ -1642,7 +1642,7 @@ body::after {
 
     .parts-header {
         gap: 10px;
-        padding: 10px 15px;
+        padding: 45px 15px 10px;
         width: 100%;
         box-sizing: border-box;
     }
@@ -1657,7 +1657,7 @@ body::after {
     }
 
     .search-container {
-        top: 60px;
+        top: 95px;
         left: 15px;
         right: 15px;
         max-width: calc(100% - 30px);
@@ -1668,7 +1668,7 @@ body::after {
     #services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
-        padding: 140px 15px 15px;
+        padding: 180px 15px 15px;
         width: 100%;
         box-sizing: border-box;
     }
