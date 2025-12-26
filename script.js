@@ -265,7 +265,10 @@ function loadParts() {
     // Показываем индикатор загрузки
     partsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #0097a7; font-size: 1.2rem;"><i class="fas fa-spinner fa-spin"></i> Загрузка товаров...</div>';
     
-    fetch(PARTS_API_URL)
+    // Добавляем кэшбастинг
+    const apiUrl = PARTS_API_URL + '&t=' + new Date().getTime();
+    
+    fetch(apiUrl)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Ошибка загрузки данных');
@@ -281,7 +284,16 @@ function loadParts() {
             allProducts = [];
             
             // Обрабатываем элементы из JSON
-            data.items.forEach(item => {
+            data.items.forEach((item, index) => {
+                // Отладка: выводим первый элемент для проверки структуры
+                if (index === 0) {
+                    console.log('Первый товар из CSV:', item);
+                    console.log('Доступные ключи:', Object.keys(item));
+                }
+                
+                // Всеядная логика получения URL картинки
+                const imgUrl = item['Картинки'] || item['Картинка'] || item['Image'] || item['image'] || item['Photo'] || item['Изображение'] || '';
+                
                 const product = {
                     id: item.ID || item.id || '',
                     name: item['Название'] || item.name || '',
@@ -289,8 +301,13 @@ function loadParts() {
                     price: item['Цена'] || item.price || 0,
                     category: item['Категория'] || item.category || '',
                     availability: item['Наличие'] || item.stock || item.availability || '',
-                    image: item['Картинки'] || item['Image'] || item['Изображение'] || item.image || 'img/parts/oils.jpg'
+                    image: imgUrl || 'img/parts/oils.jpg'
                 };
+                
+                // Отладка: если есть изображение, выводим его
+                if (index < 3 && imgUrl) {
+                    console.log(`Товар #${index + 1}: ${product.name}, картинка: ${imgUrl}`);
+                }
                 
                 allProducts.push(product);
             });
@@ -431,7 +448,10 @@ function loadServices() {
     // Показываем индикатор загрузки
     servicesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #0097a7; font-size: 1.2rem;"><i class="fas fa-spinner fa-spin"></i> Загрузка услуг...</div>';
     
-    fetch(SERVICES_API_URL)
+    // Добавляем кэшбастинг
+    const apiUrl = SERVICES_API_URL + '&t=' + new Date().getTime();
+    
+    fetch(apiUrl)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Ошибка загрузки данных');
@@ -447,7 +467,16 @@ function loadServices() {
             allServices = [];
             
             // Обрабатываем элементы из JSON
-            data.items.forEach(item => {
+            data.items.forEach((item, index) => {
+                // Отладка: выводим первый элемент для проверки структуры
+                if (index === 0) {
+                    console.log('Первая услуга из CSV:', item);
+                    console.log('Доступные ключи:', Object.keys(item));
+                }
+                
+                // Всеядная логика получения URL картинки
+                const imgUrl = item['Картинки'] || item['Картинка'] || item['Image'] || item['image'] || item['Photo'] || item['Изображение'] || '';
+                
                 const service = {
                     id: item.ID || item.id || '',
                     name: item['Название'] || item.name || '',
@@ -455,8 +484,13 @@ function loadServices() {
                     price: item['Цена'] || item.price || 0,
                     brand: item['Марка авто'] || item.carBrand || item.brand || 'Все',
                     duration: item['Продолжительность работ (мин)'] || item.duration || 0,
-                    image: item['Картинки'] || item['Image'] || item['Изображение'] || item.image || 'img/services/maintenance.jpg'
+                    image: imgUrl || 'img/services/maintenance.jpg'
                 };
+                
+                // Отладка: если есть изображение, выводим его
+                if (index < 3 && imgUrl) {
+                    console.log(`Услуга #${index + 1}: ${service.name}, картинка: ${imgUrl}`);
+                }
                 
                 allServices.push(service);
             });
