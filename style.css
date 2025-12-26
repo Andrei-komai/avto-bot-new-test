@@ -346,7 +346,7 @@ body::after {
     .cart-button {
         width: 50px;
         height: 50px;
-        top: 40px;
+        top: 20px;
         right: 15px;
     }
 
@@ -372,7 +372,7 @@ body::after {
     }
 
     .header {
-        padding: 50px 15px 40px;
+        padding: 20px 15px 20px;
     }
 
     .title {
@@ -400,6 +400,17 @@ body::after {
     .nav-button {
         width: 100%;
         min-width: 0;
+    }
+    
+    .cart-button {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .cart-button i {
+        font-size: 1.1rem;
     }
 }
 
@@ -1382,7 +1393,7 @@ body::after {
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.95);
-    padding: 20px;
+    padding: 15px 20px;
     z-index: 110;
     backdrop-filter: blur(10px);
 }
@@ -1475,7 +1486,7 @@ body::after {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
     margin-bottom: 30px;
-    padding: 200px 20px 20px;
+    padding: 160px 20px 20px;
 }
 
 .product-card {
@@ -1578,10 +1589,19 @@ body::after {
     #services-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 10px;
+        padding: 140px 15px 15px;
     }
 
     .parts-title {
         font-size: 1.8rem;
+    }
+    
+    .parts-header {
+        padding: 12px 15px;
+    }
+    
+    .search-container {
+        top: 70px;
     }
 
     .back-button {
@@ -1622,7 +1642,7 @@ body::after {
 
     .parts-header {
         gap: 10px;
-        padding: 15px;
+        padding: 10px 15px;
         width: 100%;
         box-sizing: border-box;
     }
@@ -1637,7 +1657,7 @@ body::after {
     }
 
     .search-container {
-        top: 75px;
+        top: 60px;
         left: 15px;
         right: 15px;
         max-width: calc(100% - 30px);
@@ -1648,7 +1668,7 @@ body::after {
     #services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
-        padding: 170px 15px 15px;
+        padding: 140px 15px 15px;
         width: 100%;
         box-sizing: border-box;
     }
