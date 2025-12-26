@@ -288,7 +288,8 @@ function loadParts() {
                     description: item['Описание'] || item.description || '',
                     price: item['Цена'] || item.price || 0,
                     category: item['Категория'] || item.category || '',
-                    availability: item['Наличие'] || item.stock || item.availability || ''
+                    availability: item['Наличие'] || item.stock || item.availability || '',
+                    image: item['Картинки'] || item['Image'] || item['Изображение'] || item.image || 'img/parts/oils.jpg'
                 };
                 
                 allProducts.push(product);
@@ -329,14 +330,17 @@ function displayProducts(products) {
         card.dataset.description = product.description;
         
         card.innerHTML = `
-            <h3>${product.name}</h3>
-            <div class="description">${product.description}</div>
-            <div class="category">${product.category}</div>
-            <div class="availability">${product.availability}</div>
-            <div class="price">${product.price} ₽</div>
-            <button class="add-to-cart-btn" onclick='addToCart({title: "${product.name.replace(/'/g, "\\'")}",price: "${product.price}",category: "Запчасть"})'>
-                <i class="fas fa-cart-plus"></i> В корзину
-            </button>
+            <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='img/parts/oils.jpg'">
+            <div class="card-content">
+                <h3>${product.name}</h3>
+                <div class="description">${product.description}</div>
+                <div class="category">${product.category}</div>
+                <div class="availability">${product.availability}</div>
+                <div class="price">${product.price} ₽</div>
+                <button class="add-to-cart-btn" onclick='addToCart({title: "${product.name.replace(/'/g, "\\'")}",price: "${product.price}",category: "Запчасть"})'>
+                    <i class="fas fa-cart-plus"></i> В корзину
+                </button>
+            </div>
         `;
         
         partsGrid.appendChild(card);
@@ -450,7 +454,8 @@ function loadServices() {
                     description: item['Описание'] || item.description || '',
                     price: item['Цена'] || item.price || 0,
                     brand: item['Марка авто'] || item.carBrand || item.brand || 'Все',
-                    duration: item['Продолжительность работ (мин)'] || item.duration || 0
+                    duration: item['Продолжительность работ (мин)'] || item.duration || 0,
+                    image: item['Картинки'] || item['Image'] || item['Изображение'] || item.image || 'img/services/maintenance.jpg'
                 };
                 
                 allServices.push(service);
@@ -491,14 +496,17 @@ function displayServices(services) {
         card.dataset.description = service.description;
         
         card.innerHTML = `
-            <h3>${service.name}</h3>
-            <div class="description">${service.description}</div>
-            <div class="category"><i class="fas fa-car"></i> Марка: ${service.brand}</div>
-            <div class="availability"><i class="fas fa-clock"></i> ${service.duration} мин</div>
-            <div class="price">${service.price} ₽</div>
-            <button class="add-to-cart-btn" onclick='addToCart({title: "${service.name.replace(/'/g, "\\'")}",price: "${service.price}",category: "Услуга"})'>
-                <i class="fas fa-cart-plus"></i> В корзину
-            </button>
+            <img src="${service.image}" alt="${service.name}" class="product-image" onerror="this.src='img/services/maintenance.jpg'">
+            <div class="card-content">
+                <h3>${service.name}</h3>
+                <div class="description">${service.description}</div>
+                <div class="category"><i class="fas fa-car"></i> Марка: ${service.brand}</div>
+                <div class="availability"><i class="fas fa-clock"></i> ${service.duration} мин</div>
+                <div class="price">${service.price} ₽</div>
+                <button class="add-to-cart-btn" onclick='addToCart({title: "${service.name.replace(/'/g, "\\'")}",price: "${service.price}",category: "Услуга"})'>
+                    <i class="fas fa-cart-plus"></i> В корзину
+                </button>
+            </div>
         `;
         
         servicesGrid.appendChild(card);
