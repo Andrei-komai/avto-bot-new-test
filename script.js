@@ -71,6 +71,15 @@ function updateCartBadge() {
     }
 }
 
+// Функция для конвертации GitHub ссылок в прямые ссылки на файлы
+function fixGitHubLink(url) {
+    if (!url) return '';
+    if (url.includes('github.com') && url.includes('/blob/')) {
+        return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+    }
+    return url;
+}
+
 // Функция добавления товара в корзину
 function addToCart(item) {
     // Извлекаем название из разных возможных полей
@@ -292,7 +301,8 @@ function loadParts() {
                 }
                 
                 // Всеядная логика получения URL картинки
-                const imgUrl = item['Картинки'] || item['Картинка'] || item['Image'] || item['image'] || item['Photo'] || item['Изображение'] || '';
+                const rawUrl = item['Картинки'] || item['Картинка'] || item['Image'] || item['image'] || item['Photo'] || item['Изображение'] || '';
+                const imgUrl = fixGitHubLink(rawUrl);
                 
                 const product = {
                     id: item.ID || item.id || '',
@@ -475,7 +485,8 @@ function loadServices() {
                 }
                 
                 // Всеядная логика получения URL картинки
-                const imgUrl = item['Картинки'] || item['Картинка'] || item['Image'] || item['image'] || item['Photo'] || item['Изображение'] || '';
+                const rawUrl = item['Картинки'] || item['Картинка'] || item['Image'] || item['image'] || item['Photo'] || item['Изображение'] || '';
+                const imgUrl = fixGitHubLink(rawUrl);
                 
                 const service = {
                     id: item.ID || item.id || '',
