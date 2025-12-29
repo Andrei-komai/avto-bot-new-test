@@ -82,14 +82,19 @@ function fixGitHubLink(url) {
 
 // Функция добавления товара в корзину
 function addToCart(item) {
+    // Логирование для отладки
+    console.log('Adding item to cart:', item);
+    
     // Извлекаем название из разных возможных полей
-    const productTitle = item['Название'] || item['Название услуги'] || item.title || item.name || 'Без названия';
+    const productTitle = item['Название'] || item['Название услуги'] || item['Service Name'] || item['Name'] || item.title || item.name || 'Без названия';
+    
+    console.log('Extracted title:', productTitle);
     
     // Извлекаем цену
-    const productPrice = item['Цена'] || item.price || '0';
+    const productPrice = item['Цена'] || item['Price'] || item.price || '0';
     
     // Извлекаем категорию
-    const productCategory = item['Категория'] || item.category || 'Товар';
+    const productCategory = item['Категория'] || item['Category'] || item.category || 'Товар';
     
     // Извлекаем ID
     const productId = item.ID || item.id || '';
