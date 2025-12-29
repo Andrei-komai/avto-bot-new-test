@@ -1138,6 +1138,31 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (phoneInput) {
         phoneInput.addEventListener('input', validateCheckoutForm);
+        
+        // Автоматическое добавление +7 при фокусе
+        phoneInput.addEventListener('focus', () => {
+            if (!phoneInput.value) {
+                phoneInput.value = '+7';
+            }
+        });
+        
+        // Форматирование номера телефона
+        phoneInput.addEventListener('input', (e) => {
+            let value = phoneInput.value.replace(/[^\d+]/g, ''); // Только цифры и +
+            
+            // Если стерли +7, верни его
+            if (!value.startsWith('+7')) {
+                value = value.replace(/^\+/, '').replace(/^7/, '').replace(/^8/, '');
+                value = '+7' + value;
+            }
+            
+            // Ограничиваем длину: +7 и 10 цифр = 12 символов
+            if (value.length > 12) {
+                value = value.substring(0, 12);
+            }
+            
+            phoneInput.value = value;
+        });
     }
     
     // Инициализируем Telegram данные
