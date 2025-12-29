@@ -170,10 +170,10 @@ navButtons.forEach(button => {
 
 // Обработчик кнопки корзины
 cartButton.addEventListener('click', () => {
-    if (cartCount > 0) {
+    if (cart.length > 0) {
         // Здесь можно открыть модальное окно корзины
         // или отправить данные в бота
-        tg.showAlert(`В корзине товаров: ${cartCount}`);
+        tg.showAlert(`В корзине товаров: ${cart.length}`);
         
         if (tg.HapticFeedback) {
             tg.HapticFeedback.notificationOccurred('success');
@@ -489,15 +489,18 @@ function loadServices() {
                     console.log('Доступные ключи:', Object.keys(item));
                 }
                 
+                // Получаем значения по индексу (вторая колонка - название)
+                const values = Object.values(item);
+                
                 // Всеядная логика получения URL картинки
                 const rawUrl = item['Картинки'] || item['Картинка'] || item['Image'] || item['image'] || item['Photo'] || item['Изображение'] || '';
                 const imgUrl = fixGitHubLink(rawUrl);
                 
                 const service = {
-                    id: item.ID || item.id || '',
-                    name: item['Название'] || item.name || '',
-                    description: item['Описание'] || item.description || '',
-                    price: item['Цена'] || item.price || 0,
+                    id: item.ID || item.id || values[0] || '',
+                    name: item['Название услуги'] || item['Название'] || item.name || values[1] || 'Услуга',
+                    description: item['Описание'] || item.description || values[2] || '',
+                    price: item['Цена'] || item.price || values[3] || 0,
                     brand: item['Марка авто'] || item.carBrand || item.brand || 'Все',
                     duration: item['Продолжительность работ (мин)'] || item.duration || 0,
                     image: imgUrl || 'img/services/maintenance.jpg'
