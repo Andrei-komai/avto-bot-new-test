@@ -1748,7 +1748,7 @@ body::after {
 
     /* Адаптация корзины для мобильных */
     .cart-button {
-        top: 120px;
+        top: 120px !important;
     }
     
     .cart-content {
