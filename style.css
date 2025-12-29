@@ -65,7 +65,7 @@ body::after {
     text-align: center;
     padding: 60px 40px 20px;
     position: relative;
-    margin-top: 120px;
+    margin-top: 20px;
 }
 
 .title {
@@ -173,7 +173,7 @@ body::after {
    ============================================ */
 .cart-button {
     position: fixed;
-    top: 120px;
+    top: 20px;
     right: 10px;
     background-color: #005f7f;
     color: #ffffff;
@@ -616,7 +616,7 @@ body::after {
 }
 
 .cart-content {
-    padding: 190px 20px 100px;
+    padding: 100px 20px 100px;
     max-width: 900px;
     margin: 0 auto;
 }
@@ -793,7 +793,7 @@ body::after {
 }
 
 .checkout-content {
-    padding: 190px 20px 40px;
+    padding: 100px 20px 40px;
     max-width: 700px;
     margin: 0 auto;
 }
@@ -1394,7 +1394,7 @@ body::after {
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.95);
-    padding: 110px 20px 15px;
+    padding: 20px 20px 15px;
     z-index: 110;
     backdrop-filter: blur(10px);
 }
@@ -1436,7 +1436,7 @@ body::after {
 
 .search-container {
     position: fixed;
-    top: 185px;
+    top: 75px;
     left: 20px;
     right: 20px;
     margin-bottom: 0;
@@ -1487,7 +1487,7 @@ body::after {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
     margin-bottom: 30px;
-    padding: 270px 20px 20px;
+    padding: 160px 20px 20px;
 }
 
 .product-card {
@@ -1747,6 +1747,10 @@ body::after {
     }
 
     /* Адаптация корзины для мобильных */
+    .cart-button {
+        top: 120px;
+    }
+    
     .cart-content {
         padding: 190px 15px 180px;
         width: 100%;
