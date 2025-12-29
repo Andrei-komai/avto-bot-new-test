@@ -26,6 +26,7 @@ body {
     min-height: 100vh;
     width: 100%;
     max-width: 100vw;
+    padding-top: 50px !important;
 }
 
 /* ============================================
@@ -172,7 +173,7 @@ body::after {
    ============================================ */
 .cart-button {
     position: fixed;
-    top: 60px;
+    top: 100px;
     right: 20px;
     background-color: #005f7f;
     color: #ffffff;
@@ -230,6 +231,10 @@ body::after {
 /* ============================================
    Секции контента
    ============================================ */
+section {
+    padding-top: 60px;
+}
+
 .content-section {
     padding: 20px;
     margin: 20px auto;
@@ -1389,11 +1394,11 @@ body::after {
     gap: 20px;
     margin-bottom: 0;
     position: fixed;
-    top: 0;
+    top: 50px;
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.95);
-    padding: 50px 20px 15px;
+    padding: 15px 20px;
     z-index: 110;
     backdrop-filter: blur(10px);
 }
@@ -1435,7 +1440,7 @@ body::after {
 
 .search-container {
     position: fixed;
-    top: 90px;
+    top: 125px;
     left: 20px;
     right: 20px;
     margin-bottom: 0;
@@ -1486,7 +1491,7 @@ body::after {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
     margin-bottom: 30px;
-    padding: 160px 20px 20px;
+    padding: 210px 20px 20px;
 }
 
 .product-card {
@@ -1589,7 +1594,7 @@ body::after {
     #services-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 10px;
-        padding: 180px 15px 15px;
+        padding: 210px 15px 15px;
     }
 
     .parts-title {
@@ -1597,11 +1602,12 @@ body::after {
     }
     
     .parts-header {
-        padding: 45px 15px 12px;
+        top: 50px;
+        padding: 15px;
     }
     
     .search-container {
-        top: 100px;
+        top: 125px;
     }
 
     .back-button {
@@ -1642,7 +1648,8 @@ body::after {
 
     .parts-header {
         gap: 10px;
-        padding: 45px 15px 10px;
+        top: 50px;
+        padding: 12px 15px;
         width: 100%;
         box-sizing: border-box;
     }
@@ -1657,7 +1664,7 @@ body::after {
     }
 
     .search-container {
-        top: 95px;
+        top: 120px;
         left: 15px;
         right: 15px;
         max-width: calc(100% - 30px);
@@ -1668,7 +1675,7 @@ body::after {
     #services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
-        padding: 180px 15px 15px;
+        padding: 205px 15px 15px;
         width: 100%;
         box-sizing: border-box;
     }
